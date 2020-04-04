@@ -1,1 +1,0 @@
-C:/script/AHK/Working/mouse2drag.ahk
