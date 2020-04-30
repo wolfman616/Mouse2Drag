@@ -1,11 +1,14 @@
 ﻿/* 
+ 
 ;Please Use autohotkey 1.2+ 32bit (UI Access) AutoHotkeyA32_UIA.exe
-;mouse 2 to drag windows whilst retaining right click contexts etc
-;mouse 2 ruler on desktop
+;mouse 2 to drag windows whilst retaining right click abilities contexts etc
 ;mouse 1 ruler on desktop
+;mousewheel context menu operatinon middle button to select
 ;Fun Tooltip with ruler which avoids the mouse
+;Will add a deadzone but personally not supporter of concept as I prefer retaining responsive movements
 
 ;Matt Wolff - 2020
+
  */
 #WinActivateforce
 SendMode input
