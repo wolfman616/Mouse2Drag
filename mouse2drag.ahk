@@ -5,7 +5,6 @@
 ;mouse 1 ruler on desktop
 ;Fun Tooltip with ruler which avoids the mouse
 
-;2 fix: disable drag on detection of click icon on desktop
 ;Matt Wolff - 2020
  */
 #WinActivateforce
