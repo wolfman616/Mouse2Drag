@@ -1,29 +1,29 @@
 ﻿/* 
- 
 ;Please Use autohotkey 1.2+ 32bit (UI Access) AutoHotkeyA32_UIA.exe
-;mouse 2 to drag windows whilst retaining right click abilities contexts etc
+;mouse 2 to drag windows whilst retaining right click contexts etc
+;mouse 2 ruler on desktop
 ;mouse 1 ruler on desktop
-;mousewheel context menu operatinon middle button to select
-;Fun Tooltip with ruler which avoids the mouse
-;Will add a deadzone but personally not supporter of concept as I prefer retaining responsive movements
-
-;Matt Wolff - 2020
-
+;Tooltip  ruler  avoids  mouse
+;ctrl +numpad del incase bugs mouse 2
+;fixed: disable drag on desktop
+;MWolff - 2020
  */
 #WinActivateforce
 SendMode input
 #singleinstance force
 #persistent
-;Menu, Tray, Icon, mouse2drag32.png
+Menu, Tray, Icon, mouse24.ico
 setbatchlines -1
 CoordMode, Mouse
 ;coordmode, mouse, screen
+IniRead Class1, aaa.ini, class, class1
+IniRead Class2, aaa.ini, class, class2
+IniRead Class3, aaa.ini, class, class3
 global twit=1
 global begin_x:=
 global begin_Y:=
 xx:=
 yy:=
-0clicked=0
 BrkLoop = 0
 F12::
    UnderCursorToggle := (! UnderCursorToggle)
@@ -42,17 +42,14 @@ BrkLoop = 1
 Return
 }
 
-NumpadDot::Rbutton
+^NumpadDot::Rbutton
 Rbutton::
-punter:
+punt:
 {
 MouseGetPos, begin_x, begin_y, Window
-
 WinGetPos, EWD_OriginalPosX, EWD_OriginalPosY,,, ahk_id %Window%
 WinGet, EWD_WinState, MinMax, ahk_id %Window% 	
 WinGetClass Class, ahk_id %Window%
-;WinActivate
-;WinGetTitle Title, aclass %Window%
 EWD_MouseStartX_old=%EWD_MouseStartX%
 					EWD_MouseStartY_old=%EWD_MouseStartY%
 If (DetectContextMenu() = 1)
@@ -60,7 +57,9 @@ If (DetectContextMenu() = 1)
 ;tooltip, 
 ;removing context to refocus at desired loc
 click, escape
-goto punter
+;tooltip, contxt
+tooltip,
+goto punt
 ;WinActivate, ahk_id %Window%
 
 }
@@ -70,10 +69,24 @@ goto punter
 
 
 
+if (Class=class1) or (Class=Class2) or (Class=Class3)
+{
+while GetKeyState("rbutton" , "P") 
+{
+					GetKeyState, EWD_RbuttonState, RButton, P
+
+					if EWD_RbuttonState = U  ; Button released, drag carried out.
+{
+click, right
+exit
+}
+}
 
 
-if WinActive("ahk_class tooltips_class32")
-return
+
+exit
+}
+else
 while GetKeyState("rbutton" , "P") 
 				{
 
@@ -84,8 +97,7 @@ while GetKeyState("rbutton" , "P")
 				MouseGetPos, EWD_MouseStartX, EWD_MouseStartY, EWD_MouseWin
 				WinGetPos, EWD_OriginalPosX, EWD_OriginalPosY,,, ahk_id %EWD_MouseWin%
 				WinGet, EWD_WinState, MinMax, ahk_id %EWD_MouseWin% 
-								
-				if EWD_WinState = 0
+
 					; Only if the window isn't maximized
 																									;unmaximize  ?
 					;tooltip, window drag activated' n - Mouse 1 to Cancel
@@ -93,90 +105,82 @@ while GetKeyState("rbutton" , "P")
 
 					return
 				EWD_WatchMouse:
-;MouseGetPos, x, y
 
+if (x!=EWD_MouseStartX)
+gosub penard
 
 					GetKeyState, EWD_RbuttonState, RButton, P
 
 					if EWD_RbuttonState = U  ; Button released, drag carried out.
 						{
-
-;click, right
-
+						;click, right
 						SetTimer, EWD_WatchMouse, Off
 						SetTimer, tooloff, -2000
-;tooltip up
+						;tooltip up
 CoordMode, Mouse
 mousegetpos xxxx, yyyy
 
-if  xxxx!=% begin_x
-return
+;if  xxxx!=% begin_x
+if  (xxxx>begin_x -25) && (xxxx<begin_x +25) 
+	{
+	click, right
+	exit
+	}
 else
-
- click, right
-return
+	{
+	return
+	}
 ; mousemove xxxx+1, yyyy+1
 ; mousemove xxxx, yyyy
 ; }
-
-						return
-						}
-					GetKeyState, EWD_EscapeState, LButton, P
-					if EWD_EscapeState = D  
-						{
-						SetTimer, EWD_WatchMouse, Off
-						SetWinDelay -1
-						WinMove, ahk_id %Window%,, %EWD_OriginalPosX%, %EWD_OriginalPosY%
-						click, up
-						;ToolTip, Aborting Drag
-						return
-						}
-if class=WorkerW
-{
-;tooltip, desktop detected
-
-while GetKeyState("rbutton" , "P") 
-	{
-	
-}
-
 return
 }
+	GetKeyState, EWD_EscapeState, LButton, P
+	if EWD_EscapeState = D  
+	{
+	SetTimer, EWD_WatchMouse, Off
+	SetWinDelay -1
+	WinMove, ahk_id %Window%,, %EWD_OriginalPosX%, %EWD_OriginalPosY%
+	click, up
+	;ToolTip, Aborting Drag
+	return
+	}
+
+if class=WorkerW
+	{
+	while GetKeyState("rbutton" , "P") 
+		{
+		;click {right}
+		if EWD_RbuttonState = U  ; Button released, drag carried out.
+			{
+			click right
+		}	}
+		exit
+		}
+
 else
-					;reposition
-					CoordMode, Mouse,
-					MouseGetPos, EWD_MouseX, EWD_MouseY
-					WinGetPos, EWD_WinX, EWD_WinY,,, ahk_id %Window%
-					SetWinDelay, -1   
-					WinMove, ahk_id %Window%,, EWD_WinX + EWD_MouseX - EWD_MouseStartX, EWD_WinY + EWD_MouseY - EWD_MouseStartY
-					
-
-					EWD_MouseStartX := EWD_MouseX  ; Update for the next timer-call to this subroutine.
-					EWD_MouseStartY := EWD_MouseY
-
-;tooltip, scummm
-
-;if WinActive("ahk_class WorkerW")	||   WinActive("ahk_class Progman")
-;tooltip mistake
-					;Tooltip, m2drag activated' n - Mouse 1 to Cancel
-;tooltip scum
-					return
-				
-
-
-}
-
-; else
+	{
+	;reposition
+	CoordMode, Mouse,
+	MouseGetPos, EWD_MouseX, EWD_MouseY
+	WinGetPos, EWD_WinX, EWD_WinY,,, ahk_id %Window%
+	SetWinDelay, -1   
+	WinMove, ahk_id %Window%,, EWD_WinX + EWD_MouseX - EWD_MouseStartX, EWD_WinY + EWD_MouseY - EWD_MouseStartY
+	EWD_MouseStartX := EWD_MouseX  ; Update for the next timer-call to this subroutine.
+	EWD_MouseStartY := EWD_MouseY
+	;tooltip, scum1
+	;if WinActive("ahk_class WorkerW")	||   WinActive("ahk_class Progman")
+	;tooltip Bug1
+	;Tooltip, m2drag activated' n - Mouse 1 to Cancel
+	;tooltip scum2
+	return
+	}}
 ; EWD_Watch2
-		
 ; sendinput {RButton}			
 ; settimer, tooloff, -2000 
-
 ;tooltip slow click
-	return		
+return		
 }
-
-
 
 numpadclear::
 {
@@ -206,7 +210,7 @@ click right
 MouseGetPos, begin_x, begin_y, Window
 WinGetClass Class, ahk_id %Window%
 If WinActive("ahk_class Basebar")
-tooltip cunt
+tooltip,
 If (DetectContextMenu() = 1)
 	{
 if class=WorkerW
@@ -315,6 +319,7 @@ tooltip,
 exit
 }
 exit
+
 HexToDec(HexVal)
 {
    Old_A_FormatInteger := A_FormatInteger
@@ -436,6 +441,19 @@ twit:=twit +1
 return
 
 
+penard:
+if EWD_WinState = 1
+{
+EWD_WinState = 2
+WinRestore,  ahk_id %Window%
+mouseGetPos, EWD_OriginalPosX, EWD_OriginalPosY
+;sleep 500
+						WinMove, ahk_id %Window%,, %EWD_OriginalPosX%, %EWD_OriginalPosY%
+
+tooltip fag
+return
+}
+return
 
 
 
