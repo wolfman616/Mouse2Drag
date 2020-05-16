@@ -1,16 +1,16 @@
 ﻿/* 
 ;
 ; 	Warning:only run with  autohotkey 1.1.3.2+ 32bit with UI Access ( AutoHotkeyA32_UIA.exe
-;;	This is due to detection of context menus
-;;
+;	* This is due to detection of context menus
+;
 ; 	KEYS:
 ;
 ;	Original right mouse button = 				CTRL + SHIFT + RIGHTCLICK  Incase bug
 ;	Quit application hotkey = 							CTRL + SHIFT + WIN + RIGHTCLICK (MouseWheelButton) 
 ;
-; 	Drag any window under cursor     			mouse2 + move => 	(left click to abort during drag)
-;	Toggle Window Info Tooltip =					CTRL+SHIFT+MIDDLECLICK(MouseWheel)=	
-;	ruler on desktop =										mouse 1 drag on desktop	(cancels on item highlight AKA selecting files with marquee)
+; 	Drag any window under cursor = 	mouse2 drag on window	(left click to abort during drag)
+;	ruler on desktop = 								mouse1 drag on desktop	(cancels on item highlight AKA selecting files with marquee)
+;	Toggle Window Info Tooltip = 			CTRL+SHIFT+MIDDLECLICK(MouseWheel)=	
 ;
 ; 	fixed:  Disabled desktop drag ((WorkerWin) or ProgMan if MMC is running) 
 ;	Blacklist ini file classnames (use window info (
@@ -24,11 +24,11 @@ SendMode input
 #persistent
 Menu, Tray, Icon, mouse24.ico
 setbatchlines -1
-CoordMode, Mouse      								;coordmode, mouse, screen ;previously set
+CoordMode, Mouse 		;coordmode, mouse, screen ; previously set
 
-IniRead Class1, M2BlackList.ini, class, class1 	;BLACKLIST-WINDOW-CLASSES
-IniRead Class2, M2BlackList.ini, class, class2 	;BLACKLIST-WINDOW-CLASSES
-IniRead Class3, M2BlackList.ini, class, class3 	;BLACKLIST-WINDOW-CLASSES
+IniRead Class1, M2BlackList.ini, class, class1 		;BLACKLIST-WINDOW-CLASSES
+IniRead Class2, M2BlackList.ini, class, class2 		;BLACKLIST-WINDOW-CLASSES
+IniRead Class3, M2BlackList.ini, class, class3 		;BLACKLIST-WINDOW-CLASSES
 global twit=1
 global begin_x:=
 global begin_Y:=
@@ -40,8 +40,8 @@ xx:=
 yy:=
 BrkLoop = 0
 
-^+#RButton::   	;			-===CTRL+SHIFT+WIN+RIGHTCLICK=----
-ExitApp 					;			  -===========GOODBYE============-
+^+#RButton:: 			;-===CTRL+SHIFT+WIN+RIGHTCLICK=----
+ExitApp 						;  -===========GOODBYE============-
 
 
 ^#Mbutton::  ;>==============CTRL=+=WIN=+=MIDDLE=MOUSE=(WHEEL)=BUTTON=to=TOGGLE=WINDOW=INFO=DISPLAY=TOOLTIP=============<
