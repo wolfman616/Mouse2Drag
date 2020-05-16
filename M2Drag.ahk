@@ -5,12 +5,12 @@
 ;
 ; 	KEYS:
 ;
-;	Original right mouse button = 				CTRL + SHIFT + RIGHTCLICK  Incase bug
-;	Quit application hotkey = 							CTRL + SHIFT + WIN + RIGHTCLICK (MouseWheelButton) 
+;	Original right mouse button =  		CTRL + SHIFT + RIGHTCLICK  Incase bug
+;	Quit application hotkey =  		CTRL + SHIFT + WIN + RIGHTCLICK (MouseWheelButton) 
 ;
 ; 	Drag any window under cursor = 	mouse2 drag on window	(left click to abort during drag)
-;	ruler on desktop = 								mouse1 drag on desktop	(cancels on item highlight AKA selecting files with marquee)
-;	Toggle Window Info Tooltip = 			CTRL+SHIFT+MIDDLECLICK(MouseWheel)=	
+;	ruler on desktop = 		mouse1 drag on desktop	(cancels on item highlight AKA selecting files with marquee)
+;	Toggle Window Info Tooltip = 		CTRL+SHIFT+MIDDLECLICK(MouseWheel)=	
 ;
 ; 	fixed:  Disabled desktop drag ((WorkerWin) or ProgMan if MMC is running) 
 ;	Blacklist ini file classnames (use window info (
