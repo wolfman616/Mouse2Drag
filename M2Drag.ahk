@@ -9,7 +9,7 @@
 ;	Quit application hotkey = 							CTRL + SHIFT + WIN + RIGHTCLICK (MouseWheelButton) 
 ;
 ; 	Drag any window under cursor     			mouse2 + move => 	(left click to abort during drag)
-;	Toggle Window Info Tooltip =					CTRL+MIDDLECLICK(MouseWheel)=	
+;	Toggle Window Info Tooltip =					CTRL+SHIFT+MIDDLECLICK(MouseWheel)=	
 ;	ruler on desktop =										mouse 1 drag on desktop	(cancels on item highlight AKA selecting files with marquee)
 ;
 ; 	fixed:  Disabled desktop drag ((WorkerWin) or ProgMan if MMC is running) 
@@ -40,8 +40,8 @@ xx:=
 yy:=
 BrkLoop = 0
 
-^+#RButton::   ;			-===CTRL+SHIFT+WIN+RIGHTCLICK=----
-ExitApp 	;				-===========GOODBYE============-
+^+#RButton::   	;			-===CTRL+SHIFT+WIN+RIGHTCLICK=----
+ExitApp 					;			  -===========GOODBYE============-
 
 
 ^#Mbutton::  ;>==============CTRL=+=WIN=+=MIDDLE=MOUSE=(WHEEL)=BUTTON=to=TOGGLE=WINDOW=INFO=DISPLAY=TOOLTIP=============<
