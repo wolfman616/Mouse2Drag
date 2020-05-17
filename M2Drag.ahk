@@ -47,16 +47,25 @@ ExitApp 						;  -===========GOODBYE============-
 ^#Mbutton::  ;>==============CTRL=+=WIN=+=MIDDLE=MOUSE=(WHEEL)=BUTTON=to=TOGGLE=WINDOW=INFO=DISPLAY=TOOLTIP=============<
    UnderCursorToggle := (! UnderCursorToggle)
    If (UnderCursorToggle)
-      SetTimer ToolTipUnderCursor, 50
-   Else
+{
+ 
+     SetTimer ToolTipUnderCursor, 50
+
+}  
+ Else
    {
       SetTimer ToolTipUnderCursor, Off
       ToolTip,% GetUnderCursorInfo
-	^#c:: ;?====================copy=window=info===CTRL=+=WIN=+=C=========?
-		clipboard:=WindowUnderCursorInfo
-		return
+
    }
 Return
+
+If (! UnderCursorToggle)
+	{
+	^#c:: 
+		clipboard:=WindowUnderCursorInfo 		; ?====================copy=window=info===CTRL=+=WIN=+=C=========?
+		return
+	}
 
 brkcheck() {
 	MouseGetPos new1x, new1y, Window
