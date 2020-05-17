@@ -1,4 +1,4 @@
-﻿/* 
+﻿ /* 
 ;
 ; 	Warning:only run with  autohotkey 1.1.3.2+ 32bit with UI Access ( AutoHotkeyA32_UIA.exe
 ;	* This is due to detection of context menus
@@ -10,11 +10,11 @@
 ;
 ; 	Drag any window under cursor = 	mouse2 drag on window	(left click to abort during drag)
 ;	ruler on desktop = 		mouse1 drag on desktop	(cancels on item highlight AKA selecting files with marquee)
-;	Toggle Window Info Tooltip = 		CTRL+SHIFT+MIDDLECLICK(MouseWheel)=	
+;	Toggle Window Info Tooltip = 		CTRL+W+MIDDLECLICK(MouseWheel)=	
 ;
 ; 	fixed:  Disabled desktop drag ((WorkerWin) or ProgMan if MMC is running) 
-;	Blacklist ini file classnames (use window info (
-; 	MWolff - 2020
+;	Blacklist ini file classnames (use Window Info above + CTRL C copies that)
+; 	Matthew Wolff - 2020
 ;
  */
 
@@ -52,8 +52,11 @@ ExitApp 						;  -===========GOODBYE============-
    {
       SetTimer ToolTipUnderCursor, Off
       ToolTip,% GetUnderCursorInfo
+	^#c:: ;?====================copy=window=info===CTRL=+=WIN=+=C=========?
+		clipboard:=WindowUnderCursorInfo
+		return
    }
-	Return
+Return
 
 brkcheck() {
 	MouseGetPos new1x, new1y, Window
@@ -394,8 +397,7 @@ ToolTipUnderCursor:
 	coordmode tooltip, mouse
 	ToolTip %WindowUnderCursorInfo%, x1 + 200,  y1
 	Sleep, %twit%	;SetWinDelay, 100
-	^#c:: ;?====================copy=window=info===CTRL=+=WIN=+=C=========?
-	clipboard:=WindowUnderCursorInfo
+
 	return
 	}
 
