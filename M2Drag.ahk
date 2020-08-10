@@ -9,12 +9,12 @@
 ;ds	Quit application hotkey =  		CTRL + SHIFT + WIN + RIGHTCLICK (MouseWheelButton) 
 ;ds
 ;ds 	Drag any window under cursor = 	mouse2 drag on window	(left click to abort during drag)
-;ds	ruler on desktop = 		mouse1 drag on desktop	(cancels on item highlight AKA selecting files with marquee)
-;ds	Toggle Window Info detail = 		CTRL+W+MIDDLECLICK(MouseWheel)=	
-;ds
-;ds 	fixed:  Disabled desktop drag ((WorkerWin) or ProgMan if MMC is running) 
+;ds	ruler on desktop = 		mouse1 drag on desktop	(cancels on selection of item with marquee)
+;ds	Toggle Window Info detail = 		CTRL+WIN+MIDDLECLICK(MouseWheel)=	
+;ds  once active, CTRL WIN + C to copy detail 
+;ds 	fixed:  Disabled desktop drag ) 
 ;ds	Blacklist ini file classnames (use Window Info above + CTRL C copies that)
-;ds 	Matthew Wolff - 2020
+;ds 	M Wolff - 2020
 ;ds
  */
 ;sendlevel 1
@@ -494,12 +494,12 @@ HexToDec(HexVal)  {
 	}
 
 Dtop_icons_Get() {
-	RunWait, "C:\Script\AHK\Desktop\Dicons_write.ahk"
+	RunWait, Dicons_write.ahk 
 	return
 	}
 
 Dtop_icons_Restore() {
-	RunWait, "C:\script\AHK\Desktop\Dicons_recover.ahk"
+	RunWait, Dicons_recover.ahk 
 	return
 	}
 
