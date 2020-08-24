@@ -17,8 +17,9 @@
 ;ds 	M Wolff - 2020
 ;ds
  */
-;sendlevel 1
-;#include ns.ahk
+
+	; sendlevel 1;#include ns.ahk ;gosub Clean_Feed
+
 #noenv																																	
 SendMode input
 #WinActivateforce
@@ -27,7 +28,7 @@ SendMode input
 Menu, Tray, Icon, mouse24.ico
 setbatchlines -1
 CoordMode, Mouse, Screen
-	CoordMode Pixel, Screen
+CoordMode, Pixel, Screen
 ;CoordMode, ToolTip, Screen;BLACKLIST-WINDOW-CLASSES
 IniRead Class1, M2BlackList.ini, Cla55, class1
 IniRead Class2, M2BlackList.ini, Cla55, class2
@@ -36,26 +37,20 @@ IniRead Class4, M2BlackList.ini, Cla55, class4
 IniRead Class5, M2BlackList.ini, Cla55, class5
 IniRead Class6, M2BlackList.ini, Cla55, class6
 IniRead Class7, M2BlackList.ini, Cla55, class7
-global begin_x
-global begin_Y
-global Cursor_int
-global cursorchange
-global EWD_MouseStartX_old
-global EWD_MouseStartY_old
-global x
-global y 
-global toolx
-global xold
-global yold
-global tooly
-global TTX
-Global TTY 
-global PID
-global controlhwnd
-global colour
-;gosub Clean_Feed  ; lol
+Global begin_x, Global begin_Y, Global Cursor_int, Global cursorchange, Global EWD_MouseStartX_old, Global EWD_MouseStartY_old, Global x
+Global y, Global toolx, Global xold, Global yold, Global tooly, Global TTX, Global TTY, Global PID, Global controlhwnd,Global colour, xx := 0, yy :=0
+
 collection := [ Chrome_WidgetWin_2, MozillaDropShadowWindowClass ]
-xx := 0, yy :=0
+
+#M::
+if !Mag
+	{
+	run M2DRAG_MAG.AHK
+	Mag:=1
+	}
+	Else Mag:=0
+Return
+	
 
 ^+#RButton:: 			;-===CTRL+SHIFT+WIN+RIGHTCLICK=----
 	ExitApp 						;  -===========GOODBYE============-
@@ -312,7 +307,26 @@ RestoreCursors()
 L_Released()
 exit
 
+#!t::  
+; Press Win+T to make the color under the mouse cursor invisible.
+MouseGetPos, MouseX, MouseY, MouseWin
+PixelGetColor, MouseRGB, %MouseX%, %MouseY%, RGB
+; It seems necessary to turn off any existing transparency first:
+WinSet, TransColor, Off, ahk_id %MouseWin%
+WinSet, TransColor, %MouseRGB% 150, ahk_id %MouseWin%
+return
 
+#!y::  ; Press Win+y to turn off transparency for the window under the mouse.
+MouseGetPos,,, MouseWin
+WinSet, TransColor, Off, ahk_id %MouseWin%
+return
+
+#!g::  ; Press Win+G to show the current settings of the window under the mouse.
+MouseGetPos,,, MouseWin
+WinGet, Transparent, Transparent, ahk_id %MouseWin%
+WinGet, TransColor, TransColor, ahk_id %MouseWin%
+ToolTip Translucency:`n%Transparent%`nTransColor:`t%TransColor%
+return
 
 ;>====Restoreicons on desktop as zooming====>
 ~^WheelDown::
@@ -605,18 +619,18 @@ Tool5Off:
 return
 
 Clean_Feed:
-global Message_Click:="::Clicked::"
-global Message_Menu_Clicked:="Context Menu Clicked"
-global Message_M2drag_Abort:="Aborting Drag"
-global Message_M2_Released:="released mouse2"
-global Message_Drag_Active:="window drag activated' n - Mouse 1 to Cancel"
-global Message_Thread_Fail:="GetGUIThreadInfo failure"
-global Message_Menu_Killed:="menu killed"
-global Message_Click_Fast:="Quick click::"
-global Message_Click_Release:="mouse 1 released"
-global Message_Click_DTop:="Left Clicked Desktop"
-global Message_Click_Other:="clicked elsewhere"
-global Message_held_DTop:="clickheld on desktop"
-global Message_Touching:="touching file"
-global Message_Moved :="%FailState% ...`n %X% %begin_X% %y% %begin_y%`n Movement detected `n %x1% %x2% %y1% %y2%, %x%, %75%"
+Global Message_Click:="::Clicked::"
+Global Message_Menu_Clicked:="Context Menu Clicked"
+Global Message_M2drag_Abort:="Aborting Drag"
+Global Message_M2_Released:="released mouse2"
+Global Message_Drag_Active:="window drag activated' n - Mouse 1 to Cancel"
+Global Message_Thread_Fail:="GetGUIThreadInfo failure"
+Global Message_Menu_Killed:="menu killed"
+Global Message_Click_Fast:="Quick click::"
+Global Message_Click_Release:="mouse 1 released"
+Global Message_Click_DTop:="Left Clicked Desktop"
+Global Message_Click_Other:="clicked elsewhere"
+Global Message_held_DTop:="clickheld on desktop"
+Global Message_Touching:="touching file"
+Global Message_Moved :="%FailState% ...`n %X% %begin_X% %y% %begin_y%`n Movement detected `n %x1% %x2% %y1% %y2%, %x%, %75%"
 return
