@@ -18,11 +18,11 @@
 ;ds
  */
 
-	; sendlevel 1;#include ns.ahk ;gosub Clean_Feed
+	; sendlevel 1;#include ns.ahk ;gosub _Feed_
 
 #noenv																																	
 SendMode input
-#WinActivateforce
+;#WinActivateforce
 #singleinstance force
 #persistent
 Menu, Tray, Icon, mouse24.ico
@@ -39,6 +39,7 @@ IniRead Class6, M2BlackList.ini, Cla55, class6
 IniRead Class7, M2BlackList.ini, Cla55, class7
 Global begin_x, Global begin_Y, Global Cursor_int, Global cursorchange, Global EWD_MouseStartX_old, Global EWD_MouseStartY_old, Global x
 Global y, Global toolx, Global xold, Global yold, Global tooly, Global TTX, Global TTY, Global PID, Global controlhwnd,Global colour, xx := 0, yy :=0
+global cock
 
 collection := [ Chrome_WidgetWin_2, MozillaDropShadowWindowClass ]
 
@@ -51,9 +52,7 @@ if !Mag
 	Else Mag:=0
 Return
 	
-
-^+#RButton:: 			;-===CTRL+SHIFT+WIN+RIGHTCLICK=----
-	ExitApp 						;  -===========GOODBYE============-
+^+#RButton:: ExitApp 					;-===CTRL+SHIFT+WIN+RIGHTCLICK=----
 
 ^#Mbutton::  		;>==============CTRL=+=WIN=+=MIDDLE=MOUSE=(WHEEL)=BUTTON=to=TOGGLE==INFO=DISPLAY==============<
 UnderCursorToggle := ! UnderCursorToggle
@@ -70,7 +69,7 @@ sleep 300
 	return
 	}
 
-^NumpadDot::Rbutton ;>=====CTRL=NUMPAD=DOT====>(NORMAL=RIGHT=CLICK=INCASE=OF=BUGS)=====<
+^NumpadDot::Rbutton 	;>=====CTRL=NUMPAD=DOT====>(NORMAL=RIGHT=CLICK=INCASE=OF=BUGS)=====<
 
 Rbutton::
 CoordMode, Mouse, screen
@@ -80,15 +79,12 @@ WinGet, EWD_WinState, MinMax, ahk_id %Window%
 WinGetClass Class, ahk_id %Window%
 EWD_MouseStartX_old=%begin_x%
 EWD_MouseStartY_old=%begin_y%
-;winactivate ahk_id %window%
-;
-;WinGetClass aclass, ahk_id %Window%
+
 ;Bypass classes
 ;
 if (Class=class1) or (Class=Class2) or (Class=Class3) or (Class=Class4) or (Class=Class5) or (Class=Class6) or (class=Shell_TrayWnd)
 	{
 	click, down, right
-	{
 	loop
 		{
 		GetKeyState, KSRB, RButton, P
@@ -99,7 +95,7 @@ if (Class=class1) or (Class=Class2) or (Class=Class3) or (Class=Class4) or (Clas
 			}
 		}
 	exit
-	}
+	
 /* 
 ;desktop 
 if (Class=Class5) or (Class=Class6)
@@ -313,7 +309,8 @@ MouseGetPos, MouseX, MouseY, MouseWin
 PixelGetColor, MouseRGB, %MouseX%, %MouseY%, RGB
 ; It seems necessary to turn off any existing transparency first:
 WinSet, TransColor, Off, ahk_id %MouseWin%
-WinSet, TransColor, %MouseRGB% 150, ahk_id %MouseWin%
+sleep 100
+WinSet, TransColor, %MouseRGB%, ahk_id %MouseWin%
 return
 
 #!y::  ; Press Win+y to turn off transparency for the window under the mouse.
@@ -343,6 +340,76 @@ return
 		Dtop_icons_Restore()
 	return
 
++PgDn::    ;Wheel Right = page down without interfering with selection
+	WinGetClass, Active_WinClass , A
+	MouseGetPos, , , Mouse_hWnd, Mouse_ClassNN
+	WinGetClass, Mouse_WinClass , ahk_id %Mouse_hWnd%
+	;WinGetTitle Mouse_WinTitle, ahk_id %Mouse_hWnd%	;ControlGet, Mouse_ControLhWnd, Hwnd ,, %Mouse_ClassNN%, ahk_id %Mouse_hWnd%
+	if Active_WinClass != % Mouse_WinClass
+		{
+	if Mouse_WinClass in MozillaWindowClass,Chrome_WidgetWin_1
+		{
+		controlsend, %Mouse_ClassNN%, { PgDn }, ahk_id %Mouse_hWnd%
+		} else if Mouse_WinClass in CabinetWClass,Notepad++
+		{
+		if Mouse_ClassNN=DirectUIHWND2
+			SendMessage, 0x115, 3, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
+		else	
+			SendMessage, 0x115, 3, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
+		} else 
+if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
+			controlsend, %Mouse_ClassNN%, { Right } , ahk_id %Mouse_hWnd%
+		
+	else {
+			ControlSend, , { PgDn }, ahk_id %Mouse_hWnd%
+		}
+	}
+	else
+	if Mouse_WinClass in CabinetWClass,Notepad++
+		{
+		if Mouse_ClassNN=DirectUIHWND2
+			SendMessage, 0x115, 3, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
+		else	
+			SendMessage, 0x115, 3, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
+		} else 
+			send, { pgdn }
+	Return    
+
++PgUp::    ;Wheel Left = page up without interfering with selection
+	WinGetClass, Active_WinClass , A
+	MouseGetPos, , , Mouse_hWnd, Mouse_ClassNN
+	WinGetClass, Mouse_WinClass , ahk_id %Mouse_hWnd%
+	;ControlGet, Mouse_ControLhWnd, Hwnd ,, %Mouse_ClassNN%, ahk_id %Mouse_hWnd%
+	if Active_WinClass != % Mouse_WinClass
+		{
+	if Mouse_WinClass in MozillaWindowClass
+		controlsend, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
+	else 
+		if Mouse_WinClass in Chrome_WidgetWin_1
+			controlsendraw, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
+	else
+		if Mouse_WinClass in CabinetWClass,Notepad++
+			{
+			if Mouse_ClassNN=DirectUIHWND2
+				SendMessage, 0x115, 2, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
+			else	
+				SendMessage, 0x115, 2, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
+			} else
+		if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
+			controlsend, %Mouse_ClassNN%, { Left } , ahk_id %Mouse_hWnd%
+		else {
+		ControlSend, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
+	}	} else
+		if Mouse_WinClass in CabinetWClass,Notepad++
+			{
+			if Mouse_ClassNN=DirectUIHWND2
+				SendMessage, 0x115, 2, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
+			else	
+				SendMessage, 0x115, 2, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
+			} else send, { pgup }
+	Return    
+
+
 #If (DetectContextMenu() = 1)  	 ;<=======MOUSE=WHEEL=NAVIGATE=IN=(CONTEXT)=MENU=======>
 	{		 	
 	WheelUp::
@@ -353,9 +420,6 @@ return
 		Send, { down }
 		Return
 
-	PgDn::    ;  Razer_WheelRight
-		Send, { right }
-		Return
 
 	PgUp::    ;  Razer_WheelLeft
 		Send, { left }
@@ -618,7 +682,7 @@ Tool5Off:
 	tooltip,,,,5
 return
 
-Clean_Feed:
+_Feed_:
 Global Message_Click:="::Clicked::"
 Global Message_Menu_Clicked:="Context Menu Clicked"
 Global Message_M2drag_Abort:="Aborting Drag"
