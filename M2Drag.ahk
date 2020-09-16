@@ -43,13 +43,12 @@ global cock
 
 collection := [ Chrome_WidgetWin_2, MozillaDropShadowWindowClass ]
 
-#M::
-if !Mag
-	{
+#M:: 
+if (!Mag) {
 	run M2DRAG_MAG.AHK
 	Mag:=1
 	}
-	Else Mag:=0
+Else Mag:=0
 Return
 	
 ^+#RButton:: ExitApp 					;-===CTRL+SHIFT+WIN+RIGHTCLICK=----
@@ -60,13 +59,13 @@ UnderCursorToggle := ! UnderCursorToggle
 		SetTimer CursorTip, 30
 		^#c:: 
 		clipboard:=WindowUnderCursorInfo 		; ?====================copy=window=info===CTRL=+=WIN=+=C=========?
-		return
+		Return
 	}	Else {   
 	sleep 100
 	SetTimer CursorTip, off
 sleep 300
 ^#c::^#c
-	return
+	Return
 	}
 
 ^NumpadDot::Rbutton 	;>=====CTRL=NUMPAD=DOT====>(NORMAL=RIGHT=CLICK=INCASE=OF=BUGS)=====<
@@ -143,7 +142,7 @@ while GetKeyState("rbutton" , "P")
 		}
 	mdrag_active()
 	SetTimer, EWD_WatchMouse, 1 ; Track cursor vector differential
-	return
+	Return
 
 EWD_WatchMouse:
 if (x!=EWD_MouseStartX)
@@ -165,9 +164,9 @@ if EWD_RbuttonState = U  ; Button released, drag carried out.
 		}
 	else
 		{
-		return
+		Return
 		}
-	return
+	Return
 	}
 GetKeyState, EWD_EscapeState, LButton, P
 	if EWD_EscapeState = D  
@@ -176,7 +175,7 @@ GetKeyState, EWD_EscapeState, LButton, P
 		SetWinDelay -1	;click, up, left
 		WinMove, ahk_id %Window%,, %EWD_OriginalPosX%, %EWD_OriginalPosY%
 		abort_Mdrag()
-		return
+		Return
 		}
 else   ;reposition
 	{
@@ -225,7 +224,7 @@ Return
 	clicked()
 	RestoreCursors()
 	;If WinActive("ahk_class Basebar") ;cant rememeber why this was here
-	;	return 
+	;	Return 
 	if (aclass="WorkerW")  or  (aclass="Progman")
 		{
 		L_clicked_Desktop()
@@ -255,11 +254,11 @@ Lclick_held()
 			}
 		else 
 			Quick_L_click()
-			return
+			Return
 		}
 	else 
 		Clicked_somewhere()
-	return		
+	Return		
 
 Ruler: 	
 aax := % Explorer_GetSelection()
@@ -298,7 +297,7 @@ while GetKeyState("LButton", "P")
 		}	
 	else, sleep 20
 	}
-settimer tool5off, -2000
+SetTimer tool5off, -2000
 RestoreCursors()
 L_Released()
 exit
@@ -311,19 +310,19 @@ PixelGetColor, MouseRGB, %MouseX%, %MouseY%, RGB
 WinSet, TransColor, Off, ahk_id %MouseWin%
 sleep 100
 WinSet, TransColor, %MouseRGB%, ahk_id %MouseWin%
-return
+Return
 
 #!y::  ; Press Win+y to turn off transparency for the window under the mouse.
 MouseGetPos,,, MouseWin
 WinSet, TransColor, Off, ahk_id %MouseWin%
-return
+Return
 
 #!g::  ; Press Win+G to show the current settings of the window under the mouse.
 MouseGetPos,,, MouseWin
 WinGet, Transparent, Transparent, ahk_id %MouseWin%
 WinGet, TransColor, TransColor, ahk_id %MouseWin%
 ToolTip Translucency:`n%Transparent%`nTransColor:`t%TransColor%
-return
+Return
 
 ;>====Restoreicons on desktop as zooming====>
 ~^WheelDown::
@@ -331,14 +330,14 @@ return
 	WinGetClass, cla555, ahk_id %aaaaasss%,,
 	if (cla555= "WorkerW") ||  (cla555="Progman")
 		Dtop_icons_Restore()
-	return
+	Return
 
 ~^WheelUp::
 	MouseGetPos, begin_x, begin_y, aaaaasss
 	WinGetClass, cla555, ahk_id %aaaaasss%,,
 	if (cla555= "WorkerW") ||  (cla555="Progman")
 		Dtop_icons_Restore()
-	return
+	Return
 
 +PgDn::    ;Wheel Right = page down without interfering with selection
 	WinGetClass, Active_WinClass , A
@@ -409,6 +408,19 @@ if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
 			} else send, { pgup }
 	Return    
 
+#LButton::PostMessage_2CursorWin(0x111, 41504, 0)
+if (ErrorLevel) {
+	ToolTip, %ErrorLevel% Error
+	SetTimer, ToolOff, -1000
+	}
+Return
+
+#RButton::PostMessage_2CursorCTL(0x111, 41504, 0)
+if (ErrorLevel) {
+	ToolTip, %ErrorLevel% Error
+	SetTimer, ToolOff, -1000
+	}
+Return
 
 #If (DetectContextMenu() = 1)  	 ;<=======MOUSE=WHEEL=NAVIGATE=IN=(CONTEXT)=MENU=======>
 	{		 	
@@ -420,25 +432,24 @@ if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
 		Send, { down }
 		Return
 
-
 	PgUp::    ;  Razer_WheelLeft
 		Send, { left }
 		Return
 
 	MButton:: 	;  WheelButton
 		Send, { enter }
-		return
+		Return
 	}
 
 f8:: 			; 				_-========TESTING=/=TIMING=DEBUG========-_
 	twit:=twit +1
-	return
+	Return
 
 numpadclear::
 	WINID := WinExist("A")
 	sleep 200
 	tooltip % WINID
-	return
+	Return
 	
 CursorTip:     
 	coordmode tooltip, screen
@@ -466,7 +477,7 @@ r00la(byref x, byref y) {
 	Kraby := Abs(begin_y-y)
 	R_Return := "  "begin_x ", " begin_y "`n"
 .  "X:" krabx " Y:" kraby ""
-	return R_Return
+	Return R_Return
 	}
 
 Explorer_GetSelection(hwnd="")  {
@@ -485,11 +496,11 @@ Explorer_GetSelection(hwnd="")  {
 					sel := window.Document.SelectedItems
 				}
             catch
-				return
+				Return
 	for item in sel
 		ToReturn .= item.path "`n"
         }
-    return Trim(ToReturn,"`n")
+    Return Trim(ToReturn,"`n")
 }
 
 GetUnderCursorInfo(ByRef CursorX, ByRef CursorY)  {
@@ -548,13 +559,13 @@ SetSystemCursor() {
 	Cursors = %Cursor_int%,32512
 	Loop , Parse, Cursors, `,
 		DllCall( "SetSystemCursor", Uint,CursorHandle, Int,A_Loopfield )
-	return
+	Return
 	}
 
 RestoreCursors() {
 	SPI_SETCURSORS := 0x57
 	DllCall( "SystemParametersInfo", UInt,SPI_SETCURSORS, UInt,0, UInt,0, UInt,0 )
-	return
+	Return
 	}
 
 In(x,a,b)  { 
@@ -571,116 +582,134 @@ HexToDec(HexVal)  {
    Return DecVal
 	}
 
+PostMessage_2CursorWin(Message, wParam = 0, lParam=0) {	
+	OldCoordMode:= A_CoordModeMouse
+	CoordMode, Mouse, Screen
+	MouseGetPos X, Y, , , 2
+	hWnd := DllCall("WindowFromPoint", "int", X , "int", Y)
+	PostMessage %Message%, %wParam%, %lParam%, , ahk_id %hWnd%
+	CoordMode, Mouse, %OldCoordMode%
+  } ;</23.01.000004>
+
+PostMessage_2CursorCTL(Message, wParam = 0, lParam=0) {	
+	OldCoordMode:= A_CoordModeMouse
+	CoordMode, Mouse, Screen
+	MouseGetPos X, Y, , hwnd , 2
+	;hWnd := DllCall("WindowFromPoint", "int", X , "int", Y)
+	PostMessage %Message%, %wParam%, %lParam%, , ahk_id %hWnd%
+	CoordMode, Mouse, %OldCoordMode%
+  } ;</23.01.000004>
+
 Dtop_icons_Get() {
 	RunWait, Dicons_write.ahk 
-	return
+	Return
 	}
 
 Dtop_icons_Restore() {
 	RunWait, Dicons_recover.ahk 
-	return
+	Return
 	}
 
 clicked() {
 	tooltip, % Message_Click
-	settimer, tool1off, -1000
-	return
+	SetTimer, tool1off, -1000
+	Return
 	}
 
 contextmenRclicked() {
 	tooltip, % Message_Menu_Clicked
-	settimer, tool1off, -1000
-	return
+	SetTimer, tool1off, -1000
+	Return
 	}
 
 abort_Mdrag() {
 	ToolTip, % Message_M2drag_Abort
-	settimer, tool1off, -1000
-	return
+	SetTimer, tool1off, -1000
+	Return
 	}
 
 m2_released() {
 	tooltip % Message_M2_Released
-	settimer, tool1off, -1000
-	return
+	SetTimer, tool1off, -1000
+	Return
 	}
 
 mdrag_active() {
 	tooltip, % Message_Drag_Active
-	return
+	Return
 	}
 
 ThreadFail() {
 	tooltip, %Message_Thread_Fail%, (A_ScreenWidth // 2), (A_ScreenWidth // 2)
-	settimer, tool1off, -3000
-	return
+	SetTimer, tool1off, -3000
+	Return
 	}
 
 Context_killed() {
 	tooltip, %Message_Menu_Killed%,,,4
-	settimer, tool4off, -1000
-	return
+	SetTimer, tool4off, -1000
+	Return
 	}
 
 Quick_L_click() {
 	Tooltip % Message_Click_Fast
-	settimer, tool1off, -1000
-	return
+	SetTimer, tool1off, -1000
+	Return
 	}
 
 L_Released() {
 	tooltip, %Message_Click_Release%,,,4
-	settimer, tool4off, -1000
-	return
+	SetTimer, tool4off, -1000
+	Return
 	}
 
 L_clicked_Desktop() {
 	tooltip, %Message_Click_DTop%, (begin_x+100), (begin_Y+20)
-	settimer, Tool1Off, -750
-	return
+	SetTimer, Tool1Off, -750
+	Return
 	}
 
 Clicked_somewhere() {
 	tooltip, %Message_Click_Other%
-	settimer, Tool1Off, -750
-	return
+	SetTimer, Tool1Off, -750
+	Return
 	}
 
 Lclick_held() {
 		tooltip %Message_held_DTop%
-		settimer, Tool1Off, -750
-	return
+		SetTimer, Tool1Off, -750
+	Return
 	}
 
 touching_file() {
 	tooltip, %Message_Touching% , toolx, tooly,4
-	settimer, Tool4Off, -750
-	return
+	SetTimer, Tool4Off, -750
+	Return
 	}
 
 ToolOff:
 	tooltip,
-return
+Return
 
 Tool1Off:
 	tooltip,,,,1
-return
+Return
 
 Tool2Off:
 	tooltip,,,,2
-return
+Return
 
 Tool3Off:
 	tooltip,,,,3
-return
+Return
 
 Tool4Off:
 	tooltip,,,,4
-return
+Return
 
 Tool5Off:
 	tooltip,,,,5
-return
+Return
 
 _Feed_:
 Global Message_Click:="::Clicked::"
@@ -697,4 +726,4 @@ Global Message_Click_Other:="clicked elsewhere"
 Global Message_held_DTop:="clickheld on desktop"
 Global Message_Touching:="touching file"
 Global Message_Moved :="%FailState% ...`n %X% %begin_X% %y% %begin_y%`n Movement detected `n %x1% %x2% %y1% %y2%, %x%, %75%"
-return
+Return
