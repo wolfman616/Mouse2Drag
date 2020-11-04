@@ -4,24 +4,25 @@
 #Persistent
 SendMode Input  
 SetBatchLines -1
-#NoTrayIcon
+;#NoTrayIcon
 Gui +AlwaysOnTop +disabled 
 CoordMode Mouse, Screen
 IniRead, LastScaleFactor, zoom.ini, LastScaleFactor, LastScaleFactor , 4
-Zoom:=LastScaleFactor
+global Zoom:=LastScaleFactor
 Paused:=0
 FPS = 4
-RefreshInterval:=(1000/FPS)
-Antialiasing = 0
-WinDPIMultiplicator := A_ScreenDPI / 144
-Rx = 256 									; half vertical/horizontal side of ninjMag window
-Ry = 230
-rox := round(Rx/WinDPIMultiplicator)
-roy := round(Ry/WinDPIMultiplicator)
-Zx := round(Rx/Zoom) 							
-Zy := round(Ry/Zoom)
+global RefreshInterval:=(1000/FPS)
+global Antialiasing = 0
+global WinDPIMultiplicator := A_ScreenDPI / 144
+global Rx = 256 									; half vertical/horizontal side of ninjMag window
+global Ry = 230
+global rox := round(Rx/WinDPIMultiplicator)
+global roy := round(Ry/WinDPIMultiplicator)
+global Zx := round(Rx/Zoom) 							
+global Zy := round(Ry/Zoom)
 Gui Show, , ninjMag
 Gui, Hide 
+gosub faggbot
 #M::
    if !Paused
 		{ 
@@ -32,17 +33,9 @@ Gui, Hide
 		}
    else
 		{
-		Menu, Tray, Icon, search_32.ico
-		Gui Show, % "w" Rx "h" Ry "x" A_ScreenWidth-Rox "y" A_ScreenHeight-Roy "NoActivate" , ninjMag    ;bottom right
-		WinGet ninjMagID, id, ninjMag
-		WinSet, Style, 0x10000000,ninjMag 
-		WinSet, ExStyle, 0x08000008, ninjMag
-		WinSet Transparent, 0, ninjMag 
-		WinSet Transparent, 255, ninjMag 
-		WinGet PrintSourceID, ID
-		hdd_frame := DllCall("GetDC", UInt, PrintSourceID)
-		hdc_frame := DllCall("GetDC", UInt, ninjMagID)
-		SetTimer, Repaint, %RefreshInterval%
+gosub faggbot
+
+
 		Paused :=
 		}
 return
@@ -75,6 +68,7 @@ Repaint:
 	xz := In(x-Zx-6,0,A_ScreenWidth-2*Zx) ; keep  frame on screen
 	yz := In(y-Zy-6,0,A_ScreenHeight-2*Zy) ; 
 	WinMove Frame,,%xz%, %yz%, % 2*Zx, % 2*Zy 
+DllCall("gdi32.dll\SetStretchBltMode", uint, hdc_frame, int, 4)
 	DllCall("gdi32.dll\StretchBlt", UInt,hdc_frame, Int,0, Int,0, Int,2*Rx, Int,2*Ry, UInt,hdd_frame, UInt,xz, UInt,yz, Int,2*Zx, Int,2*Zy, UInt,0xCC0020)        
 	; SRCCOPY
 	Return
@@ -82,6 +76,23 @@ Repaint:
 tooloff:
 	tooltip
 	return
+faggbot:
+{
+	Menu, Tray, Icon, search_32.ico
+	X_OUT:=A_ScreenWidth-Rox
+	Y_OUT:=A_ScreenHeight-Roy
+	Gui Show, w %Rx% h %Ry% x %X_OUT% y %Y_OUT% NoActivate , ninjMag    ;bottom right
+	WinGet ninjMagID, id, ninjMag
+	WinSet, Style, 0x10000000,ninjMag 
+	WinSet, ExStyle, 0x08000008, ninjMag
+	WinSet Transparent, 0, ninjMag 
+	WinSet Transparent, 255, ninjMag 
+	WinGet PrintSourceID, ID
+	hdd_frame := DllCall("GetDC", UInt, PrintSourceID)
+	hdc_frame := DllCall("GetDC", UInt, ninjMagID)
+	SetTimer, Repaint, %RefreshInterval%
+	return
+	}
 
 GuiClose:
 	{

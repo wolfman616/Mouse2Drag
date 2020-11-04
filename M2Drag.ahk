@@ -37,15 +37,24 @@ IniRead Class4, M2BlackList.ini, Cla55, class4
 IniRead Class5, M2BlackList.ini, Cla55, class5
 IniRead Class6, M2BlackList.ini, Cla55, class6
 IniRead Class7, M2BlackList.ini, Cla55, class7
+IniRead Class8, M2BlackList.ini, Cla55, class8
 Global begin_x, Global begin_Y, Global Cursor_int, Global cursorchange, Global EWD_MouseStartX_old, Global EWD_MouseStartY_old, Global x
 Global y, Global toolx, Global xold, Global yold, Global tooly, Global TTX, Global TTY, Global PID, Global controlhwnd,Global colour, xx := 0, yy :=0
 global cock
-
+global aaa
+global bbb
+global cunt1
+global cunt2
+global ccc
+global ddd
+maggy:="C:\Script\AHK\Working\M2DRAG_MAG.AHK"
+AHKizzle:="C:\Program Files\AHK\AutoHotkey.exe"
 collection := [ Chrome_WidgetWin_2, MozillaDropShadowWindowClass ]
+Mag:=0
 
 #M:: 
 if (!Mag) {
-	run M2DRAG_MAG.AHK
+	run %ahkizzle% %maggy% 
 	Mag:=1
 	}
 Else Mag:=0
@@ -73,15 +82,33 @@ sleep 300
 Rbutton::
 CoordMode, Mouse, screen
 MouseGetPos, begin_x, begin_y, Window
-WinGetPos, EWD_OriginalPosX, EWD_OriginalPosY,,, ahk_id %Window%
+CoordMode, Mouse,
+WinGetPos, EWD_OriginalPosX, EWD_OriginalPosY, aaa, bbb, ahk_id %Window%
 WinGet, EWD_WinState, MinMax, ahk_id %Window% 	
 WinGetClass Class, ahk_id %Window%
+if class=#32770
+	{
+	ccc:= aaa - 1
+	ddd:= bbb - 1
+	cunt1:=EWD_OriginalPosX
+	cunt2:=EWD_OriginalPosY
+	SetFormat, Integer, hex
+	cunt1 += 0  ; Sets Var (which previously contained 11) to be 0xb.
+	SetFormat, Integer, hex
+	cunt2 += 0  ; Sets Var (which previously contained 11) to be 0xb.
+	cunt1=%cunt1%
+	cunt2=%cunt2%
+	;WinHide, ahk_class #32770
+	WinMove, ahk_id %Window%,, 0x00, 0x00, ccc, ddd
+	WinMove, ahk_id %Window%,, %cunt1%, %cunt2%, ccc, ddd
+	;WinShow, ahk_class #32770
+	}
 EWD_MouseStartX_old=%begin_x%
 EWD_MouseStartY_old=%begin_y%
 
 ;Bypass classes
 ;
-if (Class=class1) or (Class=Class2) or (Class=Class3) or (Class=Class4) or (Class=Class5) or (Class=Class6) or (class=Shell_TrayWnd)
+if (Class=class1) or (Class=Class2) or (Class=Class3) or (Class=Class4) or (Class=Class5) or (Class=Class6) or (class=Shell_TrayWnd) or (Class=Class8)
 	{
 	click, down, right
 	loop
