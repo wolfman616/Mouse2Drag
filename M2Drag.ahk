@@ -8,107 +8,105 @@
 ;ds	Original right mouse button =  		CTRL + SHIFT + RIGHTCLICK  Incase bug
 ;ds	Quit application hotkey =  		CTRL + SHIFT + WIN + RIGHTCLICK (MouseWheelButton) 
 ;ds
-;ds 	Drag any window under cursor = 	mouse2 drag on window	(left click to abort during drag)
+;ds 	Drag any Window under cursor = 	mouse2 drag on Window	(left click to abort during drag)
 ;ds	ruler on desktop = 		mouse1 drag on desktop	(cancels on selection of item with marquee)
 ;ds	Toggle Window Info detail = 		CTRL+WIN+MIDDLECLICK(MouseWheel)=	
 ;ds  once active, CTRL WIN + C to copy detail 
 ;ds 	fixed:  Disabled desktop drag ) 
-;ds	Blacklist ini file classnames (use Window Info above + CTRL C copies that)
+;ds	Blacklist ini file Classnames (use Window Info above + CTRL C copies that)
 ;ds 	M Wolff - 2020
 ;ds
  */
 
-	; sendlevel 1;#include ns.ahk ;gosub _Feed_
+	; sendlevel 1;#include ns.ahk ;gosub _Feed_ ;#WinActivateforce ;CoordMode, ToolTip, Screen;BLACKLIST-Window-ClassES
 
+SetWorkingDir %A_ScriptDir% 
 #noenv																																	
-SendMode input
-;#WinActivateforce
+SendMode input 
 #singleinstance force
 #persistent
+SetBatchLines -1
+Global Begin_X, Global Begin_Y, Global Cursor_int, Global CursorChange, Global EWD_MouseStartX_old, Global EWD_MouseStartY_old, Global X, Global Y, Global ToolX, Global XOld, Global YOld, Global tooly, Global TTX, Global TTY, Global PID, Global controlhwnd,Global colour, Global aaa, Global bbb, Global OriginalPosX, Global OriginalPosY, Global ccc, Global ddd
+IniRead Class1, M2BlackList.ini, Cla55, Class1
+IniRead Class2, M2BlackList.ini, Cla55, Class2
+IniRead Class3, M2BlackList.ini, Cla55, Class3
+IniRead Class4, M2BlackList.ini, Cla55, Class4
+IniRead Class5, M2BlackList.ini, Cla55, Class5
+IniRead Class6, M2BlackList.ini, Cla55, Class6
+IniRead Class7, M2BlackList.ini, Cla55, Class7
+IniRead Class8, M2BlackList.ini, Cla55, Class8
+IniRead Class9, M2BlackList.ini, Cla55, Class9
+IniRead Win_Drag_State, M2DRAG.ini, Drag, Activate_Window
 Menu, Tray, Icon, mouse24.ico
-setbatchlines -1
+Menu, Tray, NoStandard
+Menu, SubMenu1, Add, Activate moving Window rag, Toggle_Win_Drag_State
+if Win_Drag_State=Active
+	Menu, submenu1, Check, Activate moving Window rag,
+Menu, Tray, Add, Settings, :SubMenu1
+Menu, Tray, Standard
 CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
-;CoordMode, ToolTip, Screen;BLACKLIST-WINDOW-CLASSES
-IniRead Class1, M2BlackList.ini, Cla55, class1
-IniRead Class2, M2BlackList.ini, Cla55, class2
-IniRead Class3, M2BlackList.ini, Cla55, class3
-IniRead Class4, M2BlackList.ini, Cla55, class4
-IniRead Class5, M2BlackList.ini, Cla55, class5
-IniRead Class6, M2BlackList.ini, Cla55, class6
-IniRead Class7, M2BlackList.ini, Cla55, class7
-IniRead Class8, M2BlackList.ini, Cla55, class8
-Global begin_x, Global begin_Y, Global Cursor_int, Global cursorchange, Global EWD_MouseStartX_old, Global EWD_MouseStartY_old, Global x
-Global y, Global toolx, Global xold, Global yold, Global tooly, Global TTX, Global TTY, Global PID, Global controlhwnd,Global colour, xx := 0, yy :=0
-global cock
-global aaa
-global bbb
-global cunt1
-global cunt2
-global ccc
-global ddd
-maggy:="C:\Script\AHK\Working\M2DRAG_MAG.AHK"
-AHKizzle:="C:\Program Files\AHK\AutoHotkey.exe"
+maggy:="C:\Script\AHK\Working\M2DRAG_MAG.AHK", AHKizzle:="C:\Program Files\AHK\AutoHotkey.exe", Mag:=0, XX := 0, YY :=0 
 collection := [ Chrome_WidgetWin_2, MozillaDropShadowWindowClass ]
-Mag:=0
+
+OnExit, AtExit
 
 #M:: 
-if (!Mag) {
-	run %ahkizzle% %maggy% 
-	Mag:=1
-	}
-Else Mag:=0
-Return
+	if (!Mag) {
+		run %ahkizzle% %maggy% 
+		Mag:=1
+		}
+	Else Mag:=0
+	Return
 	
-^+#RButton:: ExitApp 					;-===CTRL+SHIFT+WIN+RIGHTCLICK=----
+^+#RButton:: ExitApp 					     ;     CTRL     SHIFT     WIN     RIGHTCLICK
 
-^#Mbutton::  		;>==============CTRL=+=WIN=+=MIDDLE=MOUSE=(WHEEL)=BUTTON=to=TOGGLE==INFO=DISPLAY==============<
-UnderCursorToggle := ! UnderCursorToggle
+^#Mbutton::  		;    CTRL    +     WIN    +     MIDDLE=MOUSE     (aka WHEELBUTTON)
+	UnderCursorToggle := ! UnderCursorToggle  ;            TOGGLE     INFO     DISPLAY
 	If (UnderCursorToggle) {
 		SetTimer CursorTip, 30
-		^#c:: 
-		clipboard:=WindowUnderCursorInfo 		; ?====================copy=window=info===CTRL=+=WIN=+=C=========?
+		^#c::  ; 															CTRL     WIN     C 
+		clipboard:=WindowUnderCursorInfo 		;      copy     Window     info     
 		Return
-	}	Else {   
+	} Else {   
 	sleep 100
 	SetTimer CursorTip, off
-sleep 300
-^#c::^#c
+	sleep 300
+	^#c::^#c
 	Return
 	}
 
-^NumpadDot::Rbutton 	;>=====CTRL=NUMPAD=DOT====>(NORMAL=RIGHT=CLICK=INCASE=OF=BUGS)=====<
+^NumpadDot::RButton 	;>=====CTRL=NUMPAD=DOT====>(NORMAL=RIGHT=CLICK=INCASE=OF=BUGS)=====<
 
-Rbutton::
+RButton::
 CoordMode, Mouse, screen
-MouseGetPos, begin_x, begin_y, Window
+MouseGetPos, Begin_X, Begin_Y, Window
 CoordMode, Mouse,
 WinGetPos, EWD_OriginalPosX, EWD_OriginalPosY, aaa, bbb, ahk_id %Window%
 WinGet, EWD_WinState, MinMax, ahk_id %Window% 	
 WinGetClass Class, ahk_id %Window%
-if class=#32770
+settimer aidsy, -1
+if Class=#32770
 	{
 	ccc:= aaa - 1
 	ddd:= bbb - 1
-	cunt1:=EWD_OriginalPosX
-	cunt2:=EWD_OriginalPosY
+	OriginalPosX:=EWD_OriginalPosX
+	OriginalPosY:=EWD_OriginalPosY
 	SetFormat, Integer, hex
-	cunt1 += 0  ; Sets Var (which previously contained 11) to be 0xb.
+	OriginalPosX += 0  ; Sets Var (which previously contained 11) to be 0xb.
 	SetFormat, Integer, hex
-	cunt2 += 0  ; Sets Var (which previously contained 11) to be 0xb.
-	cunt1=%cunt1%
-	cunt2=%cunt2%
-	;WinHide, ahk_class #32770
-	WinMove, ahk_id %Window%,, 0x00, 0x00, ccc, ddd
-	WinMove, ahk_id %Window%,, %cunt1%, %cunt2%, ccc, ddd
-	;WinShow, ahk_class #32770
+	OriginalPosY += 0  ; Sets Var (which previously contained 11) to be 0xb.
+	OriginalPosX=%OriginalPosX%
+	OriginalPosY=%OriginalPosY%
+	WinMove, ahk_id %Window%,, 0x00, 0x00, ccc, ddd ;WinHide, AHK_Class #32770
+	WinMove, ahk_id %Window%,, %OriginalPosX%, %OriginalPosY%, ccc, ddd ;WinShow, AHK_Class #32770
 	}
-EWD_MouseStartX_old=%begin_x%
-EWD_MouseStartY_old=%begin_y%
+EWD_MouseStartX_old=%Begin_X%
+EWD_MouseStartY_old=%Begin_Y%
 
-;Bypass classes
+;Bypass Classes
 ;
-if (Class=class1) or (Class=Class2) or (Class=Class3) or (Class=Class4) or (Class=Class5) or (Class=Class6) or (class=Shell_TrayWnd) or (Class=Class8)
+if (Class=Class1) or (Class=Class2) or (Class=Class3) or (Class=Class4) or (Class=Class5) or (Class=Class6) or (Class=Shell_TrayWnd) or (Class=Class8) or (Class=Class9)
 	{
 	click, down, right
 	loop
@@ -116,25 +114,25 @@ if (Class=class1) or (Class=Class2) or (Class=Class3) or (Class=Class4) or (Clas
 		GetKeyState, KSRB, RButton, P
 		if KSRB = U  ; Button released, drag carried out.
 			{
-			send {rbutton}
+			send {RButton}
 			break
 			}
 		}
 	exit
-	
+	}
 /* 
 ;desktop 
 if (Class=Class5) or (Class=Class6)
 	{
 click, down, left
-	while GetKeyState("rbutton" , "P") 
+	while GetKeyState("RButton" , "P") 
 		{
 sleep 10
-		tooltip,
+		ToolTip,
 		GetKeyState, KSRB, RButton, P
 		if KSRB = U  ; Button released, drag carried out.
 			{
-			tooltip,
+			ToolTip,
 			sleep 10
 			click, up, left
 			sleep 10
@@ -144,19 +142,19 @@ sleep 10
 	exit
 	}
  */
-}
-
+	
 if (Class=Class7) ;Context menus (most)
-{
-contextmenRclicked()
-}
-
-else 
-;winactivate, ahk_id %window%
-
-insight:=
-
-while GetKeyState("rbutton" , "P") 
+	{
+	if EWD_MouseX != %EWD_MouseStartX_old%
+		If (DetectContextMenu() = 1)
+			{			;send escape ;WaitMove:=WinExist("AHK_Class #32768")
+			winclose, AHK_Class #32768
+			Context_killed()
+			}
+	contextmenRclicked()
+	}
+else insight:=""
+while GetKeyState("RButton" , "P") 
 	{
 ;	CoordMode, Mouse  ; Switch to screen/absolute coordinates.
 	MouseGetPos, EWD_MouseStartX, EWD_MouseStartY, EWD_MouseWin
@@ -164,7 +162,7 @@ while GetKeyState("rbutton" , "P")
 		{
 		WinGetPos, EWD_OriginalPosX, EWD_OriginalPosY,,, ahk_id %EWD_MouseWin%
 		WinGet, EWD_WinState, MinMax, ahk_id %EWD_MouseWin%
-		cursorchange=1
+		CursorChange=1
 		insight=1
 		}
 	mdrag_active()
@@ -174,23 +172,20 @@ while GetKeyState("rbutton" , "P")
 EWD_WatchMouse:
 if (x!=EWD_MouseStartX)
 	gosub MaxedWindow
-GetKeyState, EWD_RbuttonState, RButton, P
-if EWD_RbuttonState = U  ; Button released, drag carried out.
+GetKeyState, EWD_RButtonState, RButton, P
+if EWD_RButtonState = U  ; Button released, drag carried out.
 	{
-	;click, right ; normally click, up right
 	SetTimer, EWD_WatchMouse, Off
-	m2_released()
+	m2_released() ; normally click, up right
 	CoordMode, Mouse
-	mousegetpos xxxx, yyyy
-	;if  xxxx!=% begin_x
-	cursorchange=7
-	if  (xxxx>begin_x -25) && (xxxx<begin_x +25) 
+	mousegetpos XXXX, YYYY
+	;if  XXXX!=% Begin_X
+	CursorChange=7
+	if  (XXXX>Begin_X -25) && (XXXX<Begin_X +25) 
 		{
-		send {rbutton}
+		send {RButton}
 		exit
-		}
-	else
-		{
+		} else {
 		Return
 		}
 	Return
@@ -203,32 +198,22 @@ GetKeyState, EWD_EscapeState, LButton, P
 		WinMove, ahk_id %Window%,, %EWD_OriginalPosX%, %EWD_OriginalPosY%
 		abort_Mdrag()
 		Return
+	} else {  ;reposition
+		SetWinDelay, -1
+		;CoordMode, Mouse,
+		MouseGetPos, EWD_MouseX, EWD_MouseY
+		WinGetPos, EWD_WinX, EWD_WinY,,, ahk_id %Window%
+		WinMove, ahk_id %Window%,, EWD_WinX + EWD_MouseX - EWD_MouseStartX, EWD_WinY + EWD_MouseY - EWD_MouseStartY
+		EWD_MouseStartX = %EWD_MouseX%  ; Update for the next timer-call.
+		EWD_MouseStartY = %EWD_MouseY%
+		;for all in collection winclose, AHK_Class %collection%	;EWD_MouseStartY_old=%Begin_Y%
+		;if WinActive("AHK_Class WorkerW")	||   WinActive("AHK_Class Progman")
+		;mdrag_active()
 		}
-else   ;reposition
-	{
-	CoordMode, Mouse,
-	MouseGetPos, EWD_MouseX, EWD_MouseY
-	WinGetPos, EWD_WinX, EWD_WinY,,, ahk_id %Window%
-	SetWinDelay, -1   
-	WinMove, ahk_id %Window%,, EWD_WinX + EWD_MouseX - EWD_MouseStartX, EWD_WinY + EWD_MouseY - EWD_MouseStartY
-	EWD_MouseStartX := EWD_MouseX  ; Update for the next timer-call.
-	EWD_MouseStartY := EWD_MouseY
-	if EWD_MouseX != %EWD_MouseStartX_old%
-		If (DetectContextMenu() = 1)
-			{
-			;send escape
-			;WaitMove:=WinExist("ahk_class #32768")
-			winclose, ahk_class #32768
-			Context_killed()
-			}
-		;for all in collection winclose, ahk_class %collection%	;EWD_MouseStartY_old=%begin_y%
-		;if WinActive("ahk_class WorkerW")	||   WinActive("ahk_class Progman")
-		mdrag_active()
+	Return
 	}
-Return
-}
 
-MaxedWindow: 	;	<---===MAXIMIZED=CHECK=AND=PULL=WINDOW=TO=CURSOR=(NEEDS=FIX=TO=REALIGN=WITH=CURSOR=AESTHETICALLY)===--->
+MaxedWindow: 	;	<---===MAXIMIZED=CHECK=AND=PULL=Window=TO=CURSOR=(NEEDS=FIX=TO=REALIGN=WITH=CURSOR=AESTHETICALLY)===--->
 if EWD_WinState = 1
 	{
 	MouseGetPos, x1, y1
@@ -241,28 +226,27 @@ if EWD_WinState = 1
 	winset region,W%xaxax% H%xaxax%
 	WinMove, ahk_id %Window%,, %x2% , %y2%
 	}
-Else, 
-Return
+Else Return
 
  ~LButton::
 	CoordMode mouse, screen
-	MouseGetPos, begin_x, begin_y, Window
+	MouseGetPos, Begin_X, Begin_Y, Window
 	WinGetClass, aClass, ahk_id %Window%	
 	clicked()
 	RestoreCursors()
-	;If WinActive("ahk_class Basebar") ;cant rememeber why this was here
+	;If WinActive("AHK_Class Basebar") ;cant rememeber why this was here
 	;	Return 
-	if (aclass="WorkerW")  or  (aclass="Progman")
+	if (aClass="WorkerW")  or  (aClass="Progman")
 		{
 		L_clicked_Desktop()
-		R_wait:
-Lclick_held()
+		R_Wait:
+		LButton_Held()
 		FailState:=0
 		KeyWait, Lbutton, t0.75
 		If ErrorLevel
 			{
 			MouseGetPos, x, y
-			(x1:=begin_x + 5, x2:=begin_x - 5, y1:=begin_y + 5, y2:=begin_y - 5)
+			(x1:=Begin_X + 5, x2:=Begin_X - 5, y1:=Begin_Y + 5, y2:=Begin_Y - 5)
 			if x > %x1%
 				FailState=999
 			if x < %x2%
@@ -273,24 +257,23 @@ Lclick_held()
 				FailState=999
 			If FailState
 				{
-
-				tooltip, %Message_Moved%,,,2
+				ToolTip, %Message_Moved%,,,2
 				goto Ruler
 				}
-			else goto R_wait
+			else goto R_Wait
 			}
 		else 
 			Quick_L_click()
 			Return
 		}
 	else 
-		Clicked_somewhere()
+		Clicked_Somewhere()
 	Return		
 
 Ruler: 	
-aax := % Explorer_GetSelection()
+Selected_Item_Check := % Explorer_GetSelection()
 If (DetectContextMenu() = 1)		
-winclose, ahk_class #32768
+	winclose, AHK_Class #32768
 Cursor_int := 32651
 SetSystemCursor() 
 WaitMove:
@@ -300,21 +283,21 @@ while GetKeyState("LButton", "P")
 	MouseGetPos, x, y
 	if (xold!=x) or (yold!=y)
 		{
-		tooltipbycursor:=r00la(x,Y)
-			if (x > begin_x) 
-				toolx:= begin_x - 103
-			if (x < begin_x)
-				toolx:= begin_x
-			if (y > begin_y) 
-				tooly:= begin_y -57
-			if (y < begin_y)
-				tooly:= begin_y+ 4
-			tooltip, %tooltipbycursor%, %toolx% , %tooly% , 5
+		ToolTipbycursor:=r00la(x,Y)
+			if (x > Begin_X) 
+				toolx:= Begin_X - 103
+			if (x < Begin_X)
+				toolx:= Begin_X
+			if (y > Begin_Y) 
+				tooly:= Begin_Y -57
+			if (y < Begin_Y)
+				tooly:= Begin_Y+ 4
+			ToolTip, %ToolTipbycursor%, %toolx% , %tooly% , 5
 			xold:=x
 			yold:=y
-			aax:= % Explorer_GetSelection()
+			Selected_Item_Check:= % Explorer_GetSelection()
 			sleep 20
-			if aax
+			if Selected_Item_Check
 				{
 				SetSystemCursor()
 				gosub tool5off
@@ -322,7 +305,7 @@ while GetKeyState("LButton", "P")
 				exit
 				}
 		}	
-	else, sleep 20
+	else sleep 20
 	}
 SetTimer tool5off, -2000
 RestoreCursors()
@@ -339,12 +322,12 @@ sleep 100
 WinSet, TransColor, %MouseRGB%, ahk_id %MouseWin%
 Return
 
-#!y::  ; Press Win+y to turn off transparency for the window under the mouse.
+#!y::  ; Press Win+y to turn off transparency for the Window under the mouse.
 MouseGetPos,,, MouseWin
 WinSet, TransColor, Off, ahk_id %MouseWin%
 Return
 
-#!g::  ; Press Win+G to show the current settings of the window under the mouse.
+#!g::  ; Press Win+G to show the current settings of the Window under the mouse.
 MouseGetPos,,, MouseWin
 WinGet, Transparent, Transparent, ahk_id %MouseWin%
 WinGet, TransColor, TransColor, ahk_id %MouseWin%
@@ -353,16 +336,16 @@ Return
 
 ;>====Restoreicons on desktop as zooming====>
 ~^WheelDown::
-	MouseGetPos, begin_x, begin_y, aaaaasss
-	WinGetClass, cla555, ahk_id %aaaaasss%,,
-	if (cla555= "WorkerW") ||  (cla555="Progman")
+	MouseGetPos, Begin_X, Begin_Y, ahk_id_CHECK
+	WinGetClass, AHK_Class_CHECK, ahk_id %ahk_id_CHECK%,,
+	if (AHK_Class_CHECK= "WorkerW") ||  (AHK_Class_CHECK="Progman")
 		Dtop_icons_Restore()
 	Return
 
 ~^WheelUp::
-	MouseGetPos, begin_x, begin_y, aaaaasss
-	WinGetClass, cla555, ahk_id %aaaaasss%,,
-	if (cla555= "WorkerW") ||  (cla555="Progman")
+	MouseGetPos, Begin_X, Begin_Y, ahk_id_CHECK
+	WinGetClass, AHK_Class_CHECK, ahk_id %ahk_id_CHECK%,,
+	if (AHK_Class_CHECK= "WorkerW") ||  (AHK_Class_CHECK="Progman")
 		Dtop_icons_Restore()
 	Return
 
@@ -382,8 +365,7 @@ Return
 			SendMessage, 0x115, 3, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
 		else	
 			SendMessage, 0x115, 3, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
-		} else 
-if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
+		} else if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
 			controlsend, %Mouse_ClassNN%, { Right } , ahk_id %Mouse_hWnd%
 		
 	else {
@@ -410,28 +392,22 @@ if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
 		{
 	if Mouse_WinClass in MozillaWindowClass
 		controlsend, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
-	else 
-		if Mouse_WinClass in Chrome_WidgetWin_1
+	else 	if (Mouse_WinClass in Chrome_WidgetWin_1) 
+			{
 			controlsendraw, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
-	else
-		if Mouse_WinClass in CabinetWClass,Notepad++
+	} else if (Mouse_WinClass in CabinetWClass,Notepad++) 
 			{
 			if Mouse_ClassNN=DirectUIHWND2
 				SendMessage, 0x115, 2, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
-			else	
-				SendMessage, 0x115, 2, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
-			} else
-		if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
+			else	SendMessage, 0x115, 2, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
+			} else if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
 			controlsend, %Mouse_ClassNN%, { Left } , ahk_id %Mouse_hWnd%
-		else {
-		ControlSend, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
-	}	} else
-		if Mouse_WinClass in CabinetWClass,Notepad++
+		else 	ControlSend, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
+		} else if Mouse_WinClass in CabinetWClass,Notepad++
 			{
 			if Mouse_ClassNN=DirectUIHWND2
 				SendMessage, 0x115, 2, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
-			else	
-				SendMessage, 0x115, 2, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
+			else	SendMessage, 0x115, 2, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
 			} else send, { pgup }
 	Return    
 
@@ -449,7 +425,8 @@ if (ErrorLevel) {
 	}
 Return
 
-#If (DetectContextMenu() = 1)  	 ;<=======MOUSE=WHEEL=NAVIGATE=IN=(CONTEXT)=MENU=======>
+;<=======MOUSE=WHEEL=NAVIGATE=IN=(CONTEXT)=MENU=======>
+#If (DetectContextMenu() = 1)  	 
 	{		 	
 	WheelUp::
 		Send, { up }
@@ -475,11 +452,11 @@ f8:: 			; 				_-========TESTING=/=TIMING=DEBUG========-_
 numpadclear::
 	WINID := WinExist("A")
 	sleep 200
-	tooltip % WINID
+	ToolTip % WINID
 	Return
 	
 CursorTip:     
-	coordmode tooltip, screen
+	coordmode ToolTip, screen
 	WindowUnderCursorInfo := GetUnderCursorInfo(CursorX, CursorY)
 	If ( CursorX < (A_ScreenWidth // 2) )
 		TTX := (A_ScreenWidth // 2) + 100
@@ -498,33 +475,33 @@ CursorTip:
 
 r00la(byref x, byref y) {
 	WinGetActiveTitle, Atitle
-	WinGetClass, aclass, %atitle%,,
+	WinGetClass, aClass, %atitle%,,
 	;MouseGetPos, x, y
-	krabx:= Abs(begin_x-x)
-	Kraby := Abs(begin_y-y)
-	R_Return := "  "begin_x ", " begin_y "`n"
+	krabx:= Abs(Begin_X-x)
+	Kraby := Abs(Begin_Y-y)
+	R_Return := "  "Begin_X ", " Begin_Y "`n"
 .  "X:" krabx " Y:" kraby ""
 	Return R_Return
 	}
 
 Explorer_GetSelection(hwnd="")  {
     WinGet, process, processName, % "ahk_id" hwnd := hwnd? hwnd:WinExist("A")
-    WinGetClass class, ahk_id %hwnd%
+    WinGetClass Class, ahk_id %hwnd%
     if (process = "explorer.exe")
-        if (class ~= "Progman|WorkerW") {
-            ControlGet, files, List, Selected Col1, SysListView321, ahk_class %class%
+        if (Class ~= "Progman|WorkerW") {
+            ControlGet, files, List, Selected Col1, SysListView321, AHK_Class %Class%
             Loop, Parse, files, `n, `r
                 ToReturn .= A_Desktop "\" A_LoopField "`n"
-        } else if (class ~= "(Cabinet|Explore)WClass") {
-            for window in ComObjCreate("Shell.Application").Windows
+        } else if (Class ~= "(Cabinet|Explore)WClass") {
+            for Window in ComObjCreate("Shell.Application").Windows
 			try
 				{
-				if (window.hwnd==hwnd)
-					sel := window.Document.SelectedItems
+				if (Window.hwnd==hwnd)
+					Selected_Item := Window.Document.SelectedItems
 				}
             catch
 				Return
-	for item in sel
+	for item in Selected_Item
 		ToReturn .= item.path "`n"
         }
     Return Trim(ToReturn,"`n")
@@ -553,14 +530,14 @@ GetUnderCursorInfo(ByRef CursorX, ByRef CursorY)  {
 	WindowUnderCursorInfo := "ahk_id " Window "                               PID: " PID "`n"
  	. "process name " PName "`n"
 	. "Title " Title "`n"
- 	. "ahk_class " Class "`n"
+ 	. "AHK_Class " Class "`n"
 	. "Style / ExStyle  " Style " - " ExStyle "`n"
 	. "Control "Control             "      C_hWnd: " controlhwnd " `n"
 	. "Style / ExStyle  " ContStyle " - " ContExStyle "`n"
-;	. "control selected: " sel "`n"
+;	. "control selected: " Selected_Item "`n"
 	. "Top Left Px (" WindowX ", " WindowY ")`n"
 	. "Dimensions                                 (" Width " x " Height ")`n"
-	. "cursor window position                    (" CursorX-WindowX ", " CursorY-WindowY ")`n"
+	. "cursor Window position                    (" CursorX-WindowX ", " CursorY-WindowY ")`n"
 	. "Colour under cursor                        " Colour  "`n"
 	. "cursor's screen position                (" CursorX ", " CursorY ")`n"
 	. "`n"
@@ -621,8 +598,7 @@ PostMessage_2CursorWin(Message, wParam = 0, lParam=0) {
 PostMessage_2CursorCTL(Message, wParam = 0, lParam=0) {	
 	OldCoordMode:= A_CoordModeMouse
 	CoordMode, Mouse, Screen
-	MouseGetPos X, Y, , hwnd , 2
-	;hWnd := DllCall("WindowFromPoint", "int", X , "int", Y)
+	MouseGetPos X, Y, , hwnd , 2 ;hWnd := DllCall("WindowFromPoint", "int", X , "int", Y)
 	PostMessage %Message%, %wParam%, %lParam%, , ahk_id %hWnd%
 	CoordMode, Mouse, %OldCoordMode%
   } ;</23.01.000004>
@@ -638,13 +614,13 @@ Dtop_icons_Restore() {
 	}
 
 clicked() {
-	tooltip, % Message_Click
+	ToolTip, % Message_Click
 	SetTimer, tool1off, -1000
 	Return
 	}
 
 contextmenRclicked() {
-	tooltip, % Message_Menu_Clicked
+	ToolTip, % Message_Menu_Clicked
 	SetTimer, tool1off, -1000
 	Return
 	}
@@ -656,101 +632,108 @@ abort_Mdrag() {
 	}
 
 m2_released() {
-	tooltip % Message_M2_Released
+	ToolTip % Message_M2_Released
 	SetTimer, tool1off, -1000
 	Return
 	}
 
 mdrag_active() {
-	tooltip, % Message_Drag_Active
+	ToolTip, % Message_Drag_Active
 	Return
 	}
 
 ThreadFail() {
-	tooltip, %Message_Thread_Fail%, (A_ScreenWidth // 2), (A_ScreenWidth // 2)
+	ToolTip, %Message_Thread_Fail%, (A_ScreenWidth // 2), (A_ScreenWidth // 2)
 	SetTimer, tool1off, -3000
 	Return
 	}
 
 Context_killed() {
-	tooltip, %Message_Menu_Killed%,,,4
+	ToolTip, %Message_Menu_Killed%,,,4
 	SetTimer, tool4off, -1000
 	Return
 	}
 
 Quick_L_click() {
-	Tooltip % Message_Click_Fast
+	ToolTip % Message_Click_Fast
 	SetTimer, tool1off, -1000
 	Return
 	}
 
 L_Released() {
-	tooltip, %Message_Click_Release%,,,4
+	ToolTip, %Message_Click_Release%,,,4
 	SetTimer, tool4off, -1000
 	Return
 	}
 
 L_clicked_Desktop() {
-	tooltip, %Message_Click_DTop%, (begin_x+100), (begin_Y+20)
+	ToolTip, %Message_Click_DTop%, (Begin_X+100), (Begin_Y+20)
 	SetTimer, Tool1Off, -750
 	Return
 	}
 
-Clicked_somewhere() {
-	tooltip, %Message_Click_Other%
+Clicked_Somewhere() {
+	ToolTip, %Message_Click_Other%
 	SetTimer, Tool1Off, -750
 	Return
 	}
 
-Lclick_held() {
-		tooltip %Message_held_DTop%
-		SetTimer, Tool1Off, -750
+LButton_Held() {
+	ToolTip %Message_held_DTop%
+	SetTimer, Tool1Off, -750
 	Return
 	}
 
 touching_file() {
-	tooltip, %Message_Touching% , toolx, tooly,4
+	ToolTip, %Message_Touching% , toolx, tooly,4
 	SetTimer, Tool4Off, -750
 	Return
 	}
 
 ToolOff:
-	tooltip,
-Return
-
+	ToolTip,
+	Return
 Tool1Off:
-	tooltip,,,,1
-Return
-
+	ToolTip,,,,1
+	Return
 Tool2Off:
-	tooltip,,,,2
-Return
-
+	ToolTip,,,,2
+	Return
 Tool3Off:
-	tooltip,,,,3
-Return
-
+	ToolTip,,,,3
+	Return
 Tool4Off:
-	tooltip,,,,4
-Return
-
+	ToolTip,,,,4
+	Return
 Tool5Off:
-	tooltip,,,,5
-Return
+	ToolTip,,,,5
+	Return
+
+Toggle_Win_Drag_State:
+{
+if Win_Drag_State=Active
+	{
+	Win_Drag_State=Inactive
+	Menu, submenu1, UnCheck, Activate moving Window rag,
+	}
+else
+	{
+	Win_Drag_State=Active
+	Menu, submenu1, Check, Activate moving Window rag,
+	}
+return
+}
+
+aidsy:
+winactivate, ahk_id %Window%
+return
 
 _Feed_:
-Global Message_Click:="::Clicked::"
-Global Message_Menu_Clicked:="Context Menu Clicked"
-Global Message_M2drag_Abort:="Aborting Drag"
-Global Message_M2_Released:="released mouse2"
-Global Message_Drag_Active:="window drag activated' n - Mouse 1 to Cancel"
-Global Message_Thread_Fail:="GetGUIThreadInfo failure"
-Global Message_Menu_Killed:="menu killed"
-Global Message_Click_Fast:="Quick click::"
-Global Message_Click_Release:="mouse 1 released"
-Global Message_Click_DTop:="Left Clicked Desktop"
-Global Message_Click_Other:="clicked elsewhere"
-Global Message_held_DTop:="clickheld on desktop"
-Global Message_Touching:="touching file"
-Global Message_Moved :="%FailState% ...`n %X% %begin_X% %y% %begin_y%`n Movement detected `n %x1% %x2% %y1% %y2%, %x%, %75%"
+Global Message_Click:="::Clicked::", Global Message_Menu_Clicked:="Context Menu Clicked", Global Message_M2drag_Abort:="Aborting Drag", Global Message_M2_Released:="released mouse2", Global Message_Drag_Active:="Window drag activated' n - Mouse 1 to Cancel", Global Message_Thread_Fail:="GetGUIThreadInfo failure", Global Message_Menu_Killed:="menu killed", Global Message_Click_Fast:="Quick click::", Global Message_Click_Release:="mouse 1 released", Global Message_Click_DTop:="Left Clicked Desktop", Global Message_Click_Other:="clicked elsewhere", Global Message_held_DTop:="clickheld on desktop", Global Message_Touching:="touching file", Global Message_Moved :="%FailState% ...`n %X% %Begin_X% %y% %Begin_Y%`n Movement detected `n %x1% %x2% %y1% %y2%, %x%, %75%"
 Return
+
+atexit:
+{
+iniWrite, %Win_Drag_State% , M2DRAG.ini, Drag, Activate_Window
+ExitApp
+}
