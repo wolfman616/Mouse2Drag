@@ -20,13 +20,25 @@
 
 	; sendlevel 1;#include ns.ahk ;gosub _Feed_ ;#WinActivateforce ;CoordMode, ToolTip, Screen;BLACKLIST-Window-ClassES
 
+#NoEnv																																	
+#SingleInstance force
+#Persistent
+#MaxThreadsPerHotkey 10
 SetWorkingDir %A_ScriptDir% 
-#noenv																																	
-SendMode input 
-#singleinstance force
-#persistent
+SendMode Input 
 SetBatchLines -1
+Menu, Tray, NoStandard
+Menu, Tray, Add, Open script folder, Open_script_folder,
+Menu, Tray, Standard
+OnExit, Cleanup
+Goto Main
+Open_script_folder:
+Run %A_ScriptDir%
+Return
+Main:
 Global Begin_X, Global Begin_Y, Global Cursor_int, Global CursorChange, Global EWD_MouseStartX_old, Global EWD_MouseStartY_old, Global X, Global Y, Global ToolX, Global XOld, Global YOld, Global tooly, Global TTX, Global TTY, Global PID, Global controlhwnd,Global colour, Global aaa, Global bbb, Global OriginalPosX, Global OriginalPosY, Global ccc, Global ddd
+AlphaIncrement := 1.0
+
 IniRead Class1, M2BlackList.ini, Cla55, Class1
 IniRead Class2, M2BlackList.ini, Cla55, Class2
 IniRead Class3, M2BlackList.ini, Cla55, Class3
@@ -48,8 +60,6 @@ CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 maggy:="C:\Script\AHK\Working\M2DRAG_MAG.AHK", AHKizzle:="C:\Program Files\AHK\AutoHotkey.exe", Mag:=0, XX := 0, YY :=0 
 collection := [ Chrome_WidgetWin_2, MozillaDropShadowWindowClass ]
-
-OnExit, AtExit
 
 #M:: 
 	if (!Mag) {
@@ -76,6 +86,18 @@ OnExit, AtExit
 	Return
 	}
 
+
+f7::
+Gui, Add, Edit, w320 h50 HwndMyTextHwnd, Here is some text that is given`na custom background color.
+Gui, Add, Edit, w320 h50 HwndMyTextHwnd2, Here is some text that is given`na custom background color.
+Gui, Add, Edit, w320 h50 HwndMyTextHwnd3, Here is some text that is given`na custom background color.
+Gui +LastFound
+GuiHwnd := WinExist()
+Gui Show
+run "C:\Users\ninj\DESKTOP\setbkcolor.ahk"
+Return
+
+
 ^NumpadDot::RButton 	;>=====CTRL=NUMPAD=DOT====>(NORMAL=RIGHT=CLICK=INCASE=OF=BUGS)=====<
 
 RButton::
@@ -85,7 +107,7 @@ CoordMode, Mouse,
 WinGetPos, EWD_OriginalPosX, EWD_OriginalPosY, aaa, bbb, ahk_id %Window%
 WinGet, EWD_WinState, MinMax, ahk_id %Window% 	
 WinGetClass Class, ahk_id %Window%
-settimer aidsy, -1
+
 if Class=#32770
 	{
 	ccc:= aaa - 1
@@ -106,7 +128,7 @@ EWD_MouseStartY_old=%Begin_Y%
 
 ;Bypass Classes
 ;
-if (Class=Class1) or (Class=Class2) or (Class=Class3) or (Class=Class4) or (Class=Class5) or (Class=Class6) or (Class=Shell_TrayWnd) or (Class=Class8) or (Class=Class9)
+if (Class=Class1) or (Class=Class2) or (Class=Class3) or (Class=Class4) or (Class=Class5) or (Class=Class6) or (Class="Shell_TrayWnd") or (Class=Class8) or (Class=Class9)
 	{
 	click, down, right
 	loop
@@ -125,7 +147,7 @@ if (Class=Class1) or (Class=Class2) or (Class=Class3) or (Class=Class4) or (Clas
 if (Class=Class5) or (Class=Class6)
 	{
 click, down, left
-	while GetKeyState("RButton" , "P") 
+	While GetKeyState("RButton" , "P") 
 		{
 sleep 10
 		ToolTip,
@@ -142,19 +164,39 @@ sleep 10
 	exit
 	}
  */
-	
+/* 
 if (Class=Class7) ;Context menus (most)
 	{
 	if EWD_MouseX != %EWD_MouseStartX_old%
 		If (DetectContextMenu() = 1)
 			{			;send escape ;WaitMove:=WinExist("AHK_Class #32768")
-			winclose, AHK_Class #32768
-			Context_killed()
+			;WinClose, AHK_Class #32768
+			tooltip menu INCEPT,,,4
+			;Context_killed()
 			}
-	contextmenRclicked()
+	;contextmenRclicked()
 	}
-else insight:=""
-while GetKeyState("RButton" , "P") 
+ */
+
+Else if (Class="BaseBar") ||  (Class=Class7) 
+{
+While GetKeyState("RButton" , "U") 
+	{
+	tooltip menu INCEPT,,,4
+	send {RButton}
+	Return
+}
+
+
+Return
+}
+
+
+
+Else SetTimer aidsy, -1
+insight:=""
+
+While GetKeyState("RButton" , "P") 
 	{
 ;	CoordMode, Mouse  ; Switch to screen/absolute coordinates.
 	MouseGetPos, EWD_MouseStartX, EWD_MouseStartY, EWD_MouseWin
@@ -173,8 +215,7 @@ EWD_WatchMouse:
 if (x!=EWD_MouseStartX)
 	gosub MaxedWindow
 GetKeyState, EWD_RButtonState, RButton, P
-if EWD_RButtonState = U  ; Button released, drag carried out.
-	{
+if (EWD_RButtonState = "U")  { ; Button released, drag carried out.
 	SetTimer, EWD_WatchMouse, Off
 	m2_released() ; normally click, up right
 	CoordMode, Mouse
@@ -185,20 +226,19 @@ if EWD_RButtonState = U  ; Button released, drag carried out.
 		{
 		send {RButton}
 		exit
-		} else {
+		} Else {
 		Return
 		}
 	Return
 	}
 GetKeyState, EWD_EscapeState, LButton, P
-	if EWD_EscapeState = D  
-		{
+	if (EWD_EscapeState = "D") {
 		SetTimer, EWD_WatchMouse, Off
 		SetWinDelay -1	;click, up, left
 		WinMove, ahk_id %Window%,, %EWD_OriginalPosX%, %EWD_OriginalPosY%
 		abort_Mdrag()
 		Return
-	} else {  ;reposition
+	} Else {  ;reposition
 		SetWinDelay, -1
 		;CoordMode, Mouse,
 		MouseGetPos, EWD_MouseX, EWD_MouseY
@@ -206,7 +246,7 @@ GetKeyState, EWD_EscapeState, LButton, P
 		WinMove, ahk_id %Window%,, EWD_WinX + EWD_MouseX - EWD_MouseStartX, EWD_WinY + EWD_MouseY - EWD_MouseStartY
 		EWD_MouseStartX = %EWD_MouseX%  ; Update for the next timer-call.
 		EWD_MouseStartY = %EWD_MouseY%
-		;for all in collection winclose, AHK_Class %collection%	;EWD_MouseStartY_old=%Begin_Y%
+		;for all in collection WinClose, AHK_Class %collection%	;EWD_MouseStartY_old=%Begin_Y%
 		;if WinActive("AHK_Class WorkerW")	||   WinActive("AHK_Class Progman")
 		;mdrag_active()
 		}
@@ -214,8 +254,7 @@ GetKeyState, EWD_EscapeState, LButton, P
 	}
 
 MaxedWindow: 	;	<---===MAXIMIZED=CHECK=AND=PULL=Window=TO=CURSOR=(NEEDS=FIX=TO=REALIGN=WITH=CURSOR=AESTHETICALLY)===--->
-if EWD_WinState = 1
-	{
+if (EWD_WinState = "1") {
 	MouseGetPos, x1, y1
 	WinRestore,  ahk_id %Window%
 	wingetactivestats, titties, wind0w, hard, xamine, yeastinfections
@@ -243,8 +282,7 @@ Else Return
 		LButton_Held()
 		FailState:=0
 		KeyWait, Lbutton, t0.75
-		If ErrorLevel
-			{
+		If (ErrorLevel) {
 			MouseGetPos, x, y
 			(x1:=Begin_X + 5, x2:=Begin_X - 5, y1:=Begin_Y + 5, y2:=Begin_Y - 5)
 			if x > %x1%
@@ -260,41 +298,41 @@ Else Return
 				ToolTip, %Message_Moved%,,,2
 				goto Ruler
 				}
-			else goto R_Wait
+			Else goto R_Wait
 			}
-		else 
+		Else 
 			Quick_L_click()
 			Return
 		}
-	else 
+	Else 
 		Clicked_Somewhere()
 	Return		
 
 Ruler: 	
 Selected_Item_Check := % Explorer_GetSelection()
 If (DetectContextMenu() = 1)		
-	winclose, AHK_Class #32768
+	WinClose, AHK_Class #32768
 Cursor_int := 32651
 SetSystemCursor() 
 WaitMove:
 MouseGetPos, x, y
-while GetKeyState("LButton", "P")
+While GetKeyState("LButton", "P")
 	{
 	MouseGetPos, x, y
-	if (xold!=x) or (yold!=y)
+	if (XOld!=X) or (YOld!=y)
 		{
-		ToolTipbycursor:=r00la(x,Y)
-			if (x > Begin_X) 
-				toolx:= Begin_X - 103
-			if (x < Begin_X)
-				toolx:= Begin_X
+		ToolTipbycursor:=r00la(X,Y)
+			if (X > Begin_X) 
+				toolX:= Begin_X - 103
+			if (X < Begin_X)
+				toolX:= Begin_X
 			if (y > Begin_Y) 
 				tooly:= Begin_Y -57
 			if (y < Begin_Y)
 				tooly:= Begin_Y+ 4
-			ToolTip, %ToolTipbycursor%, %toolx% , %tooly% , 5
-			xold:=x
-			yold:=y
+			ToolTip, %ToolTipbycursor%, %toolX% , %tooly% , 5
+			XOld:=X
+			YOld:=y
 			Selected_Item_Check:= % Explorer_GetSelection()
 			sleep 20
 			if Selected_Item_Check
@@ -305,24 +343,25 @@ while GetKeyState("LButton", "P")
 				exit
 				}
 		}	
-	else sleep 20
+	Else sleep 20
 	}
 SetTimer tool5off, -2000
 RestoreCursors()
 L_Released()
 exit
 
-#!t::  
-; Press Win+T to make the color under the mouse cursor invisible.
+^1::  
+; Press ctl 1 to make the color under the mouse cursor invisible.
 MouseGetPos, MouseX, MouseY, MouseWin
 PixelGetColor, MouseRGB, %MouseX%, %MouseY%, RGB
 ; It seems necessary to turn off any existing transparency first:
 WinSet, TransColor, Off, ahk_id %MouseWin%
 sleep 100
 WinSet, TransColor, %MouseRGB%, ahk_id %MouseWin%
+;WinSet, TransColor, 0xff0000, ahk_id %MouseWin%
 Return
 
-#!y::  ; Press Win+y to turn off transparency for the Window under the mouse.
+#lbutton::  ; Press Win+y to turn off transparency for the Window under the mouse.
 MouseGetPos,,, MouseWin
 WinSet, TransColor, Off, ahk_id %MouseWin%
 Return
@@ -334,7 +373,7 @@ WinGet, TransColor, TransColor, ahk_id %MouseWin%
 ToolTip Translucency:`n%Transparent%`nTransColor:`t%TransColor%
 Return
 
-;>====Restoreicons on desktop as zooming====>
+;>====FIX icons on desktop as zooming====>
 ~^WheelDown::
 	MouseGetPos, Begin_X, Begin_Y, ahk_id_CHECK
 	WinGetClass, AHK_Class_CHECK, ahk_id %ahk_id_CHECK%,,
@@ -345,9 +384,10 @@ Return
 ~^WheelUp::
 	MouseGetPos, Begin_X, Begin_Y, ahk_id_CHECK
 	WinGetClass, AHK_Class_CHECK, ahk_id %ahk_id_CHECK%,,
-	if (AHK_Class_CHECK= "WorkerW") ||  (AHK_Class_CHECK="Progman")
+	if(AHK_Class_CHECK= "WorkerW") || (AHK_Class_CHECK="Progman") {
 		Dtop_icons_Restore()
 	Return
+}
 
 +PgDn::    ;Wheel Right = page down without interfering with selection
 	WinGetClass, Active_WinClass , A
@@ -356,73 +396,102 @@ Return
 	;WinGetTitle Mouse_WinTitle, ahk_id %Mouse_hWnd%	;ControlGet, Mouse_ControLhWnd, Hwnd ,, %Mouse_ClassNN%, ahk_id %Mouse_hWnd%
 	if Active_WinClass != % Mouse_WinClass
 		{
-	if Mouse_WinClass in MozillaWindowClass,Chrome_WidgetWin_1
-		{
-		controlsend, %Mouse_ClassNN%, { PgDn }, ahk_id %Mouse_hWnd%
-		} else if Mouse_WinClass in CabinetWClass,Notepad++
-		{
-		if Mouse_ClassNN=DirectUIHWND2
+		if Mouse_WinClass in MozillaWindowClass,Chrome_WidgetWin_1
+			{
+			controlsend, %Mouse_ClassNN%, { PgDn }, ahk_id %Mouse_hWnd%
+			} Else if Mouse_WinClass in CabinetWClass,Notepad++
+			{
+		if Mouse_ClassNN=DirectUIHWND3
 			SendMessage, 0x115, 3, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
-		else	
+		Else	
 			SendMessage, 0x115, 3, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
-		} else if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
+		} Else if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
 			controlsend, %Mouse_ClassNN%, { Right } , ahk_id %Mouse_hWnd%
 		
-	else {
+	Else {
 			ControlSend, , { PgDn }, ahk_id %Mouse_hWnd%
 		}
 	}
-	else
+	Else
 	if Mouse_WinClass in CabinetWClass,Notepad++
 		{
-		if Mouse_ClassNN=DirectUIHWND2
+		if Mouse_ClassNN=DirectUIHWND3
 			SendMessage, 0x115, 3, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
-		else	
+		Else	
 			SendMessage, 0x115, 3, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
-		} else 
+		} Else 
 			send, { pgdn }
 	Return    
 
-+PgUp::    ;Wheel Left = page up without interfering with selection
++PgUp::    ;Wheel Right = page down without interfering with selection
 	WinGetClass, Active_WinClass , A
 	MouseGetPos, , , Mouse_hWnd, Mouse_ClassNN
 	WinGetClass, Mouse_WinClass , ahk_id %Mouse_hWnd%
-	;ControlGet, Mouse_ControLhWnd, Hwnd ,, %Mouse_ClassNN%, ahk_id %Mouse_hWnd%
+	;WinGetTitle Mouse_WinTitle, ahk_id %Mouse_hWnd%	;ControlGet, Mouse_ControLhWnd, Hwnd ,, %Mouse_ClassNN%, ahk_id %Mouse_hWnd%
 	if Active_WinClass != % Mouse_WinClass
 		{
-	if Mouse_WinClass in MozillaWindowClass
-		controlsend, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
-	else 	if (Mouse_WinClass in Chrome_WidgetWin_1) 
+		if Mouse_WinClass in MozillaWindowClass,Chrome_WidgetWin_1
 			{
-			controlsendraw, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
-	} else if (Mouse_WinClass in CabinetWClass,Notepad++) 
+			controlsend, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
+			} Else if Mouse_WinClass in CabinetWClass,Notepad++
 			{
-			if Mouse_ClassNN=DirectUIHWND2
-				SendMessage, 0x115, 2, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
-			else	SendMessage, 0x115, 2, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
-			} else if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
+		if Mouse_ClassNN=DirectUIHWND3
+			SendMessage, 0x115, 2, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
+		Else	
+			SendMessage, 0x115, 2, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
+		} Else if Mouse_ClassNN=WindowsForms10.Window.8.app.0.34f5582_r6_ad1
 			controlsend, %Mouse_ClassNN%, { Left } , ahk_id %Mouse_hWnd%
-		else 	ControlSend, %Mouse_ClassNN%, { PgUp }, ahk_id %Mouse_hWnd%
-		} else if Mouse_WinClass in CabinetWClass,Notepad++
-			{
-			if Mouse_ClassNN=DirectUIHWND2
-				SendMessage, 0x115, 2, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
-			else	SendMessage, 0x115, 2, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
-			} else send, { pgup }
+		
+	Else {
+			ControlSend, , { PgUp }, ahk_id %Mouse_hWnd%
+		}
+	}
+	Else
+	if Mouse_WinClass in CabinetWClass,Notepad++
+		{
+		if Mouse_ClassNN=DirectUIHWND3
+			SendMessage, 0x115, 2, 2, ScrollBar2,  ahk_id %Mouse_hWnd%
+		Else	
+			SendMessage, 0x115, 2, 2, %Mouse_ClassNN%,  ahk_id %Mouse_hWnd%
+		} Else 
+			send, { pgdn }
 	Return    
 
-#LButton::PostMessage_2CursorWin(0x111, 41504, 0)
+
+
+
+#+LButton::PostMessage_2CursorWin(0x111, 41504, 0)
 if (ErrorLevel) {
 	ToolTip, %ErrorLevel% Error
 	SetTimer, ToolOff, -1000
 	}
 Return
 
-#RButton::PostMessage_2CursorCTL(0x111, 41504, 0)
+#+RButton::PostMessage_2CursorCTL(0x111, 41504, 0)
 if (ErrorLevel) {
 	ToolTip, %ErrorLevel% Error
 	SetTimer, ToolOff, -1000
 	}
+Return
+
+#MButton::
+   Gosub, WinGetTransparency
+   Gosub, WinSetTransparency
+   Gosub, ToolTipCreate
+Return
+
+^2::
+   Gosub, WinGetTransparency
+   Trans0 -= 10
+   Gosub, WinSetTransparency
+   Gosub, ToolTipCreate
+Return
+
+^3::
+   Gosub, WinGetTransparency
+   Trans0 += 10
+   Gosub, WinSetTransparency
+   Gosub, ToolTipCreate
 Return
 
 ;<=======MOUSE=WHEEL=NAVIGATE=IN=(CONTEXT)=MENU=======>
@@ -444,10 +513,15 @@ Return
 		Send, { enter }
 		Return
 	}
+Return
 
-f8:: 			; 				_-========TESTING=/=TIMING=DEBUG========-_
-	twit:=twit +1
-	Return
+
+;f8:: 			; 				_-========TESTING=/=TIMING=DEBUG========-_
+	; twit:=twit +1
+	; Return
+
+;SetAcrylicGlassEffect(bgrColor, 17, ahk_id window)
+;Return
 
 numpadclear::
 	WINID := WinExist("A")
@@ -492,7 +566,7 @@ Explorer_GetSelection(hwnd="")  {
             ControlGet, files, List, Selected Col1, SysListView321, AHK_Class %Class%
             Loop, Parse, files, `n, `r
                 ToReturn .= A_Desktop "\" A_LoopField "`n"
-        } else if (Class ~= "(Cabinet|Explore)WClass") {
+        } Else if (Class ~= "(Cabinet|Explore)WClass") {
             for Window in ComObjCreate("Shell.Application").Windows
 			try
 				{
@@ -521,7 +595,7 @@ GetUnderCursorInfo(ByRef CursorX, ByRef CursorY)  {
 	ControlGet, ContStyle, Style ,,%control%, ahk_id %Window%
 	ControlGet, ContExStyle, ExStyle ,,%control%, ahk_id %Window%
 	ControlGet, controlhwnd, Hwnd ,, %Control%, ahk_id %Window%
-	PixelGetColor, colour, CursorX, CursorY
+	PixelGetColor, colour, CursorX, CursorYcontrolhwnd
 	if (length:=StrLen(Title))>35
 		{
 		TitleT:= SubStr(Title, 1 , 36)
@@ -543,6 +617,19 @@ GetUnderCursorInfo(ByRef CursorX, ByRef CursorY)  {
 	. "`n"
 	. "          CTRL+ WIN+C TO COPY DETAIL          `n"
 	CoordMode Mouse
+		GetKeyState, p00, Space, P
+if p00 = D  ; Button released, drag carried out.
+{
+		SetBk(controlhwnd, Window, 0x0000FF, 0xFF0000)
+tooltip, asddasda,,,4 
+}
+GetKeyState, kik, f8, P
+if kik = D  ; Button released, drag carried out.
+{
+
+SetAcrylicGlassEffect(bgrColor, 17, ahk_id window)
+tooltip, koon,,,4 
+}
 	Return WindowUnderCursorInfo
 	}	; . HexToDec("0x" SubStr(BGR_Color, 5, 2)) ", "; . HexToDec("0x" SubStr(BGR_Color, 7, 2)) ")`n"
 
@@ -716,24 +803,273 @@ if Win_Drag_State=Active
 	Win_Drag_State=Inactive
 	Menu, submenu1, UnCheck, Activate moving Window rag,
 	}
-else
+Else
 	{
 	Win_Drag_State=Active
 	Menu, submenu1, Check, Activate moving Window rag,
 	}
-return
+Return
 }
+
+#^p::
+goto cooon
+
+cooon:
+sleep 50
+CColor(controlhwnd, Background="0x000000", Foreground="0x000000") {
+	Return CColor_(Background, Foreground, "", Hwnd+0)
+}
+
+CColor_(Wp, Lp, Msg, Hwnd) { 
+	static 
+	static WM_CTLCOLOREDIT=0x0133, WM_CTLCOLORLISTBOX=0x134, WM_CTLCOLORSTATIC=0x0138
+		  ,LVM_SETBKCOLOR=0x1001, LVM_SETTEXTCOLOR=0x1024, LVM_SETTEXTBKCOLOR=0x1026, TVM_SETTEXTCOLOR=0x111E, TVM_SETBKCOLOR=0x111D
+		  ,BS_CHECKBOX=2, BS_RADIOBUTTON=8, ES_READONLY=0x800
+		  ,CLR_NONE=-1, CSILVER=0xC0C0C0, CGRAY=0x808080, CWHITE=0xFFFFFF, CMAROON=0x80, CRED=0x0FF, CPURPLE=0x800080, CFUCHSIA=0xFF00FF, CGREEN=0x8000, CLIME=0xFF00, COLIVE=0x8080, CYELLOW=0xFFFF, CNAVY=0x800000, CBLUE=0xFF0000, CTEAL=0x808000, CAQUA=0xFFFF00
+ 		  ,CLASSES := "Button,ComboBox,Edit,ListBox,Static,RICHEDIT50W,SysListView32,SysTreeView32"
+	
+	If (Msg = "") {      
+		if !adrSetTextColor
+			adrSetTextColor	:= DllCall("GetProcAddress", "uint", DllCall("GetModuleHandle", "str", "Gdi32.dll"), "str", "SetTextColor")
+		   ,adrSetBkColor	:= DllCall("GetProcAddress", "uint", DllCall("GetModuleHandle", "str", "Gdi32.dll"), "str", "SetBkColor")
+		   ,adrSetBkMode	:= DllCall("GetProcAddress", "uint", DllCall("GetModuleHandle", "str", "Gdi32.dll"), "str", "SetBkMode")
+	
+      ;Set the colors (RGB -> BGR)
+		BG := !Wp ? "" : C%Wp% != "" ? C%Wp% : "0x" SubStr(WP,5,2) SubStr(WP,3,2) SubStr(WP,1,2) 
+		FG := !Lp ? "" : C%Lp% != "" ? C%Lp% : "0x" SubStr(LP,5,2) SubStr(LP,3,2) SubStr(LP,1,2)
+
+	  ;Activate message handling with OnMessage() on the first call for a class 
+		WinGetClass, class, ahk_id %Hwnd% 
+		If class not in %CLASSES% 
+			Return A_ThisFunc "> Unsupported control class: " class
+
+		ControlGet, style, Style, , , ahk_id %Hwnd% 
+		if (class = "Edit") && (Style & ES_READONLY) 
+			class := "Static"
+	
+		if (class = "Button")
+			if (style & BS_RADIOBUTTON) || (style & BS_CHECKBOX) 
+				 class := "Static" 
+			else Return A_ThisFunc "> Unsupported control class: " class
+		
+		if (class = "ComboBox") { 
+			VarSetCapacity(CBBINFO, 52, 0), NumPut(52, CBBINFO), DllCall("GetComboBoxInfo", "UInt", Hwnd, "UInt", &CBBINFO) 
+			hwnd := NumGet(CBBINFO, 48)		;hwndList
+			%hwnd%BG := BG, %hwnd%FG := FG, %hwnd% := BG ? DllCall("CreateSolidBrush", "UInt", BG) : -1
+
+			IfEqual, CTLCOLORLISTBOX,,SetEnv, CTLCOLORLISTBOX, % OnMessage(WM_CTLCOLORLISTBOX, A_ThisFunc) 
+
+			If NumGet(CBBINFO,44)	;hwndEdit
+				Hwnd :=  Numget(CBBINFO,44), class := "Edit"
+		} 
+
+		if class in SysListView32,SysTreeView32
+		{
+			m := class="SysListView32" ? "LVM" : "TVM" 
+			SendMessage, %m%_SETBKCOLOR, ,BG, ,ahk_id %Hwnd%
+			SendMessage, %m%_SETTEXTCOLOR, ,FG, ,ahk_id %Hwnd%
+			SendMessage, %m%_SETTEXTBKCOLOR, ,CLR_NONE, ,ahk_id %Hwnd%
+			Return
+		}
+
+		if (class = "RICHEDIT50W")
+			Return f := "RichEdit_SetBgColor", %f%(Hwnd, -BG)
+
+		if (!CTLCOLOR%Class%)
+			CTLCOLOR%Class% := OnMessage(WM_CTLCOLOR%Class%, A_ThisFunc) 
+
+		Return %Hwnd% := BG ? DllCall("CreateSolidBrush", "UInt", BG) : CLR_NONE,  %Hwnd%BG := BG,  %Hwnd%FG := FG
+   } 
+ 
+ ; Message handler 
+	critical					;its OK, always in new thread.
+
+	Hwnd := Lp + 0, hDC := Wp + 0
+	If (%Hwnd%) { 
+		DllCall(adrSetBkMode, "uint", hDC, "int", 1)
+		if (%Hwnd%FG)
+			DllCall(adrSetTextColor, "UInt", hDC, "UInt", %Hwnd%FG)
+		if (%Hwnd%BG)
+			DllCall(adrSetBkColor, "UInt", hDC, "UInt", %Hwnd%BG)
+		Return (%Hwnd%)
+	}
+}
+
+SetBk(hWnd, ghwnd, bc, tc=0xff0000) {
+	a := {}
+	a["ch"] := hWnd
+	a["gh"] := ghwnd
+	a["bc"] := ((bc&255)<<16)+(((bc>>8)&255)<<8)+(bc>>16)
+	a["tc"] := ((tc&255)<<16)+(((tc>>8)&255)<<8)+(tc>>16)
+	WindowProc("Set", a, "", "")
+}
+
+WindowProc(hwnd, uMsg, wParam, lParam)
+{
+	Static Win := {}
+	Critical
+	If (uMsg = 0x133) and Win[hwnd].HasKey(lparam)
+	{
+		DllCall("SetTextColor", "UInt", wParam, "UInt", Win[hwnd, lparam, "tc"] )
+		DllCall("SetBkColor", "UInt", wParam, "UInt", Win[hwnd, lparam, "bc"] )
+		Return Win[hwnd, lparam, "Brush"]  ; Return the HBRUSH to notify the OS that we altered the HDC.
+	}
+	If (hwnd = "Set")
+	{
+		a := uMsg
+		Win[a.gh, a.ch] := a
+		If not Win[a.gh, "WindowProcOld"]
+			Win[a.gh,"WindowProcOld"] := DllCall("SetWindowLong", "Ptr", a.gh, "Int", -4, "Int", RegisterCallback("WindowProc", "", 4), "UInt")
+		If Win[a.gh, a.ch, "Brush"]
+			DllCall("DeleteObject", "Ptr", Brush)
+		Win[a.gh, a.ch, "Brush"] := DllCall("CreateSolidBrush", "UInt", a.bc)
+		; array_list(Win)
+		Return
+	}
+	Return DllCall("CallWindowProcA", "UInt", Win[hwnd, "WindowProcOld"], "UInt", hwnd, "UInt", uMsg, "UInt", wParam, "UInt", lParam)
+}
+
+SetAcrylicGlassEffect(thisColor, thisAlpha, hWnd) {
+    Static init, accent_state := 4,
+    Static pad := A_PtrSize = 8 ? 4 : 0, WCA_ACCENT_POLICY := 19
+    NumPut(accent_state, ACCENT_POLICY, 0, "int")
+    NumPut(0x11402200, ACCENT_POLICY, 8, "int")
+    VarSetCapacity(WINCOMPATTRDATA, 4 + pad + A_PtrSize + 4 + pad, 0)
+    && NumPut(WCA_ACCENT_POLICY, WINCOMPATTRDATA, 0, "int")
+    && NumPut(&ACCENT_POLICY, WINCOMPATTRDATA, 4 + pad, "ptr")
+    && NumPut(64, WINCOMPATTRDATA, 4 + pad + A_PtrSize, "uint")
+    If !(DllCall("user32\SetWindowCompositionAttribute", "ptr", hWnd, "ptr", &WINCOMPATTRDATA))
+       Return
+    accent_size := VarSetCapacity(ACCENT_POLICY, 16, 0)
+    Return
+	}
+
+ConvertToBGRfromRGB(RGB) { ; Get numeric BGR value from numeric RGB value or HTML color name ; HEX values
+  BGR := SubStr(RGB, -1, 2) SubStr(RGB, 1, 4) 
+  Return BGR 
+	}
 
 aidsy:
 winactivate, ahk_id %Window%
-return
-
-_Feed_:
-Global Message_Click:="::Clicked::", Global Message_Menu_Clicked:="Context Menu Clicked", Global Message_M2drag_Abort:="Aborting Drag", Global Message_M2_Released:="released mouse2", Global Message_Drag_Active:="Window drag activated' n - Mouse 1 to Cancel", Global Message_Thread_Fail:="GetGUIThreadInfo failure", Global Message_Menu_Killed:="menu killed", Global Message_Click_Fast:="Quick click::", Global Message_Click_Release:="mouse 1 released", Global Message_Click_DTop:="Left Clicked Desktop", Global Message_Click_Other:="clicked elsewhere", Global Message_held_DTop:="clickheld on desktop", Global Message_Touching:="touching file", Global Message_Moved :="%FailState% ...`n %X% %Begin_X% %y% %Begin_Y%`n Movement detected `n %x1% %x2% %y1% %y2%, %x%, %75%"
 Return
 
-atexit:
-{
-iniWrite, %Win_Drag_State% , M2DRAG.ini, Drag, Activate_Window
-ExitApp
-}
+_Feed_:
+Global Message_Click:="::Clicked::", Global Message_Menu_Clicked:="Context Menu Clicked", Global Message_M2drag_Abort:="Aborting Drag", Global Message_M2_Released:="released mouse2", Global Message_Drag_Active:="Window drag activated' n - Mouse 1 to Cancel", Global Message_Thread_Fail:="GetGUIThreadInfo failure", Global Message_Menu_Killed:="menu killed", Global Message_Click_Fast:="Quick click::", Global Message_Click_Release:="mouse 1 released", Global Message_Click_DTop:="Left Clicked Desktop", Global Message_Click_Other:="clicked Elsewhere", Global Message_held_DTop:="clickheld on desktop", Global Message_Touching:="touching file", Global Message_Moved :="%FailState% ...`n %X% %Begin_X% %y% %Begin_Y%`n Movement detected `n %x1% %x2% %y1% %y2%, %x%, %75%"
+Return
+
+WinGetTransparency:
+   MouseGetPos, , , hWnd
+   If (Trans_%hWnd% = "")
+   {
+      Trans_%hWnd% := 100
+   }
+   Trans := Trans_%hWnd%
+   Trans0 := Trans
+Return
+
+WinSetTransparency:
+   WinGetClass, WindowClass, ahk_id %hWnd%
+   If (WindowClass = "Progman")
+   {
+      Return
+   }
+   Trans0 := (Trans0 < 10) ? 10 : (Trans0 > 100) ? 100 : Trans0
+   Alpha0 := Trans * 2.55		; Init. Alpha
+   Alpha := Round(Trans0 * 2.55)	; Final Alpha
+   Trans := Trans0
+   Trans_%hWnd% := Trans
+   a := Alpha - Alpha0
+   b := AlphaIncrement
+   b *= (a < 0) ? -1 : 1	; Signed increment
+   a := Abs(a)				; Abs. iteration range
+   Loop
+   {
+      Alpha0 := Round(Alpha0)
+      WinSet, Trans, %Alpha0%, ahk_id %hWnd%
+      If (Alpha0 = Alpha)
+      {
+         If (Alpha = 255)
+         {
+            If hWnd Not In %CleanupList%
+            {
+               CleanupList = %CleanupList%%hWnd%`,
+               SetTimer, Cleanup, 10000
+            }
+         }
+         Else
+         {
+            StringReplace, CleanupList, CleanupList, %hWnd%`,, , 1
+         }
+         Break
+      }
+      Else If (a >= AlphaIncrement)
+      {
+         Alpha0 += b
+         a -= AlphaIncrement
+      }
+      Else
+      {
+         Alpha0 := Alpha
+      }
+   }
+Return
+
+ToolTipCreate:
+   c := Floor(Trans / 4)
+   d := 25 - c
+   ToolTipText := "Opacity: "
+   Loop, %c%
+   {
+      ToolTipText .= "|"
+   }
+   If (c > 0)
+   {
+      ToolTipText .= " "
+   }
+   ToolTipText .= Trans . "%"
+   If (d > 0)
+   {
+      ToolTipText .= " "
+   }
+   Loop, %d%
+   {
+      ToolTipText .= "|"
+   }
+   ToolTip, %ToolTipText%
+   MouseGetPos, MouseX0, MouseY0
+   SetTimer, ToolTipDestroy
+Return
+
+ToolTipDestroy:
+   If (A_TimeIdle < 1000)
+   {
+      MouseGetPos, MouseX, MouseY
+      If (MouseX = MouseX0 && MouseY = MouseY0)
+      {
+         Return
+      }
+   }
+   SetTimer, ToolTipDestroy, Off
+   ToolTip
+Return
+
+Cleanup:
+	iniWrite, %Win_Drag_State% , M2DRAG.ini, Drag, Activate_Window
+	Loop, Parse, CleanupList, `,
+   {
+      StringReplace, CleanupList, CleanupList, %A_LoopField%`,, , 1
+      If (A_LoopField != "")
+      {
+         WinSet, Trans, Off, ahk_id %A_LoopField%
+      }
+   }
+   If (A_ExitReason = "")
+   {
+      SetTimer, Cleanup, Off
+   }
+   Else
+   {
+      ExitApp
+   }
+Return
+
