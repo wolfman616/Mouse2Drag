@@ -1,115 +1,30 @@
-﻿SetWorkingDir %A_ScriptDir% 
-#NoEnv
+﻿#NoEnv
 #SingleInstance force
 #Persistent
+;#NoTrayIcon
+		Menu, Tray, Icon, C:\Script\AHK\Working\search_32.ico
+
+	;menu, tray, noIcon
+	;menu, tray, noIcon
+ListLines, Off
 SendMode Input  
-;Menu, Tray, Icon, C:\Script\AHK\Working\search_32.ico
 SetBatchLines -1
-#NoTrayIcon
-gui +AlwaysOnTop +Owner +Resize +ToolWindow
+SetWorkingDir %A_ScriptDir% 
 CoordMode Mouse, Screen
 IniRead, LastScaleFactor, zoom.ini, LastScaleFactor, LastScaleFactor, 4
-global Antialiasing := 0, global Zoom := 8, Paused := 1
-global FPS := 60
-global Zoom := LastScaleFactor
-;global Zoom := 4
-global MagSize := 300
-global RefreshInterval:=(1000/FPS)
-global WinDPI := A_ScreenDPI
-global MagOffset := 433
-global SRCCOPY:="0x00CC0020"
-global Resize_complete :=
-
-#B:: ;inverted colour toggle
-Invert := !Invert
-	if Invert 
-		SRCCOPY:="0x00330008"
-	else 
-		SRCCOPY:="0x00CC0020"	; NOTSRCCOPY
-return
-
-#M::
-if !Paused { 
-	setTimer, Repaint, Off
-	Gui, 2:Hide 
-	Gui, Hide 
-	Paused := 1
-	Resize_complete := 
-	return
-} else {
-	if !Resize_complete
-		gosub Region_set
-	gosub Init_Gui
-	Paused :=
-}
-
-#if WinExist("ninjMag") 		; 	- to Zoom -
-{ 
-	^+Up:: 								; 	CTRL + SHIFT + M_WHEEL_UP / DOWN 
-	^+Down::	 						; 	OR 
-	^+WheelUp::                   	; 	KEYBOARD ARROW L / R to Zoom
-	^+WheelDown::  	
-	if (Zoom < 24 and ( A_ThisHotKey = "^+WheelUp" or A_ThisHotKey = "^+Up" )) {
-		Zoom := round(Zoom *= 1.189)         ; cube root of 2))
-		switch Zoom
-		{
-			case 3:
-				Zoom = 4
-			case 5:
-				Zoom = 6
-			case 7:
-				Zoom = 8
-			case 9:
-				Zoom = 10
-		}
-	} else 
-	if (Zoom >  1.0 and ( A_ThisHotKey = "^+WheelDown" or A_ThisHotKey = "^+Down" )) {
-		Zoom := round(Zoom /= 1.189)
-		switch Zoom
-		{
-			case 3:
-				Zoom = 4
-			case 5:
-				Zoom = 4
-			case 7:
-				Zoom = 6
-			case 9:
-				Zoom = 8
-		}	
-	}
-	Area_offset := 1.2*zoom
-	;toolTip, MAG: %Zoom%00 Percent,A_ScreenWidth-235,A_ScreenHeight-300
-	setTimer Tooloff, -2000
-	return
-
-	^+Left::	
-	MagSize := MagSize + 4
-	MagOffset := MagOffset + 4
-	Resize_complete := 
-	;setTimer Repaint2, -1
-	return		
-
-	^+Right:: 
-	MagSize := MagSize - 4
-	MagOffset := MagOffset - 4
-	Resize_complete := 
-	;setTimer Repaint2, -1
-	return
-
-}
-	return
+global Antialiasing := 0, global Zoom := 8, global FPS := 60, global Zoom := LastScaleFactor, global MagSize := 300, global RefreshInterval:=(1000/FPS), global WinDPI := A_ScreenDPI, global MagOffset := 333, global SRCCOPY:="0x00CC0020", global x, global y, global Area_offset := 1.2*zoom, global magoffset, global ninjMagID, global MagSize
 
 
-
-Init_Gui:
+Init_gui:
 gui +AlwaysOnTop +Resize +owner +ToolWindow +LastFound
-gui +Hwndninjmagid 	;Gui,Show,Hide ;get handle
+gui +Hwndninjmagid 	;gui,Show,Hide ;get handle
 winSet, Style, 0x96000000
 ;winSet, EXStyle, 0x00200008
 	SetWinDelay -1
-
+	if !Resize_complete
+		gosub Region_set
 mouseGetPos x, y
-Offset_Matt2 := zoom*1.5
+global Offset_Matt2 := zoom*1.5
 Initial_X := (x-271) + Offset_Matt2 
 Initial_Y := (y-271) + Offset_Matt2
 HDD_Frame := DllCall("GetDC", UInt, PrintSourceID)
@@ -122,32 +37,19 @@ if !Init_complete
 else 
 	gui Show, w %MagSize% h %MagSize% x %XXX% y %YYY% NoActivate, ninjMag
 Init_complete := 1
-setTimer, Repaint, %RefreshInterval%
-
-
-Region_set:
-winSet, Region, 0-0 W%MagSize% H%MagSize% R%MagSize%-%MagSize%, ahk_id %ninjMagid%
-Resize_complete := 1
-return
-
-Repaint:
-if Resize_complete
- {
+StartTime := A_TickCount
+loop {
+	setTimer T_det, -1
+	if toggling
+		break
+	if !Resize_complete
+		gosub Region_set
 	SetWinDelay -1
 	mouseGetPos x, y
-	XXX := round((x-magoffset) + Area_offset)
-	YYY := round((y-magoffset) + Area_offset)
-	; if (XXX < 0) and if (YYY < 0)
-	; {
-		; XXX:=Abs(xxx)
-		; yyy:=Abs(yyy)	
-	; }
+	XXX := round((x-magoffset) + Area_offset), YYY := round((y-magoffset) + Area_offset)
 	if XXX < 0
-	{
 		xxx = 0
-	}
-	if YYY < 0
-	{
+	if ( YYY < 0 ) {
 		yyy = 0
 		if (xxx > (x - (magsize+(magsize/3)) ))
 			XXX := xxx - 30
@@ -156,8 +58,7 @@ if Resize_complete
 				xxx = 0
 			}
 	}
-	Zx := 300/Zoom
-		Zy := 300/Zoom
+	Zx := 300/Zoom, Zy := 300/Zoom
 
 /* 	
 if ((xxx > (x - (magsize+(magsize/2.5)))) and if (xxx < (x +(magsize+(magsize/2.5))))) and if ((yyy > (y - (magsize+(magsize/2.5)))) and if (y < (y + (magsize+(magsize/2.5))))) {
@@ -165,23 +66,38 @@ if ((xxx > (x - (magsize+(magsize/2.5)))) and if (xxx < (x +(magsize+(magsize/2.
 		YYY := y + Area_offset
 	} 
 */
-	ViewX := 2*Zx
-	ViewY := 2*Zy
+
+	ViewX := 2*Zx, ViewY := 2*Zy
 	if ViewY < 0
 		ViewY = 0	
 	if ViewX < 0
 		ViewX = 0
 
-	ViewPos_X := x-zx
-	ViewPos_Y := y-zy
+	ViewPos_X := x-zx, ViewPos_Y := y-zy
 	if ViewPos_X < 0
 		ViewPos_X = 0
 	if ViewPos_Y < 0
 		ViewPos_Y = 0
 	DllCall("gdi32.dll\StretchBlt",UInt,HDC_Frame, Int,0, Int,0, Int, magsize , Int, magsize , UInt, HDD_Frame, UInt,ViewPos_X, UInt,ViewPos_Y, Int,ViewX, Int,ViewY, UInt, SRCCOPY)        
 	Win_Move(ninjMagID, XXX, YYY, MagSize, MagSize, 22) ; SWP_NOZORDER + SWP_NOACTIVATE
+}
+return
 
-} else gosub Region_set
+Region_set:
+winSet, Region, 0-0 W%MagSize% H%MagSize% R%MagSize%-%MagSize%, ahk_id %ninjMagid%
+Resize_complete := 1
+return
+
+T_det:
+if (ElapsedTime := A_TickCount - StartTime) > 1000
+if KeyIsDown := GetKeyState("LWin", "P")
+	if (KeyIsDown := GetKeyState("m", "P")) {	
+		Paused := 1
+		Resize_complete := 
+		gui, 2:Hide 
+		gui, Hide 
+		toggling := True
+	}
 return
 
 Repaint2:
@@ -196,15 +112,15 @@ DllCall("gdi32.dll\SetStretchBltMode",Uint, HDC_Frame, int, 5)
 DllCall("gdi32.dll\StretchBlt",UInt,HDC_Frame, Int,0, Int,0, Int, MagSize , Int, MagSize , UInt, HDD_Frame, UInt,x-zx, UInt,y-zy, Int,2*Zx, Int,2*Zy, UInt, SRCCOPY)        
 return
 
-OnExit GuiClose 
-GuiClose:
+OnExit guiClose 
+guiClose:
 gosub Clear_up_gdi
 IniWrite, %Zoom% , zoom.ini , LastScaleFactor, LastScaleFactor
 exitapp
 
 Clear_up_gdi:
-Gui, 2:destroy 
-Gui, destroy
+gui, 2:destroy 
+gui, destroy
 DllCall("gdi32.dll\DeleteDC", UInt,HDC_Frame )
 DllCall("gdi32.dll\DeleteDC", UInt,HDD_Frame )
 DllCall("gdi32.dll\DeleteObject", UInt,HDC_Frame)
@@ -215,6 +131,41 @@ tooloff:
 tooltip
 return
 ;========================================================================================
+
+
+#B:: ;inverted colour toggle
+Invert := !Invert
+	if Invert 
+		SRCCOPY:="0x00330008"
+	else 
+		SRCCOPY:="0x00CC0020"	; NOTSRCCOPY
+return
+
+#M::
+exitapp
+
+tooltip cu22222t %paused%,+50,+50,2
+
+if (!Paused or (paused := 0)) { 
+
+;	menu, tray, noIcon
+	gui, 2:Hide 
+	gui, Hide 
+	Resize_complete := 
+	Paused := 1
+
+} else {
+	if paused {
+tooltip cunt %paused%
+		Menu, Tray, Icon, C:\Script\AHK\Working\search_32.ico
+		toggling := False
+		Paused :=
+exitapp
+		gosub Init_gui
+	}
+}
+return
+
 
 Win_Get(Hwnd, pQ="", ByRef o1="", ByRef o2="", ByRef o3="", ByRef o4="", ByRef o5="", ByRef o6="", ByRef o7="", ByRef o8="", ByRef o9="") {
 	if pQ contains R,B,L
@@ -322,7 +273,6 @@ Win_GetRect(hwnd, pQ="", ByRef o1="", ByRef o2="", ByRef o3="", ByRef o4="") {
 	return retAll ? o1 " " o2 " " o3 " " o4 : o1
 }
 
-
 Win_Move(Hwnd, X="", Y="", W="", H="", Flags="") { ;	static bitmask SWP_NOMOVE=2, SWP_NOREDRAW=8, SWP_NOSIZE=1, SWP_NOZORDER=4, SWP_NOACTIVATE = 0x10, SWP_ASYNCWINDOWPOS=0x4000, HWND_BOTTOM=1, HWND_TOPMOST=-1, HWND_NOTOPMOST = -2
 
 	static SWP_NOMOVE=2, SWP_NOSIZE=1, SWP_NOZORDER=4, SWP_NOACTIVATE = 0x10, SWP_R=8, SWP_A=0x4000
@@ -356,5 +306,62 @@ In(x,a,b)  {
 	IfLess b,%x%, Return b
 	Return x
 }
+
+
+
+#if WinExist("ninjMag") 		; 	- to Zoom -
+{
+	^+Up:: 								; 	CTRL + SHIFT + M_WHEEL_UP / DOWN 
+	^+Down::	 						; 	OR 
+	^+WheelUp::                   	; 	KEYBOARD ARROW L / R to Zoom
+	^+WheelDown::  	
+	if (Zoom < 24 and ( A_ThisHotKey = "^+WheelUp" or A_ThisHotKey = "^+Up" )) {
+		Zoom := round(Zoom *= 1.189)         ; cube root of 2))
+		switch Zoom
+		{
+			case 3:
+				Zoom = 4
+			case 5:
+				Zoom = 6
+			case 7:
+				Zoom = 8
+			case 9:
+				Zoom = 10
+		}
+	} else 
+	if (Zoom >  1.0 and ( A_ThisHotKey = "^+WheelDown" or A_ThisHotKey = "^+Down" )) {
+		Zoom := round(Zoom /= 1.189)
+		switch Zoom
+		{
+			case 3:
+				Zoom = 4
+			case 5:
+				Zoom = 4
+			case 7:
+				Zoom = 6
+			case 9:
+				Zoom = 8
+		}	
+	}
+	Area_offset := 1.2*zoom
+	setTimer Tooloff, -2000
+	return
+
+	^+Left::	
+	MagSize := MagSize + 4
+	MagOffset := MagOffset + 4
+	Resize_complete := 
+	;setTimer Repaint2, -1
+	return		
+
+	^+Right:: 
+	MagSize := MagSize - 4
+	MagOffset := MagOffset - 4
+	Resize_complete := 
+	;setTimer Repaint2, -1
+	return
+}
+return
+
 
 
