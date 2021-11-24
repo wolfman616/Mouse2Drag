@@ -1,11 +1,12 @@
 ﻿#NoEnv
 #SingleInstance force
 #Persistent
-;#NoTrayIcon
-		Menu, Tray, Icon, C:\Script\AHK\Working\search_32.ico
+menu, Tray, noStandard
+menu, Tray, Icon, C:\Script\AHK\Working\search_32.ico
+menu, Tray, Add, 	Inverted, invert,
+menu, Tray, icon, 	Inverted, C:\Icon\20\invert goatse.ico
+menu, tray, standard
 
-	;menu, tray, noIcon
-	;menu, tray, noIcon
 ListLines, Off
 SendMode Input  
 SetBatchLines -1
@@ -14,15 +15,19 @@ CoordMode Mouse, Screen
 IniRead, LastScaleFactor, zoom.ini, LastScaleFactor, LastScaleFactor, 4
 global Antialiasing := 0, global Zoom := 8, global FPS := 60, global Zoom := LastScaleFactor, global MagSize := 300, global RefreshInterval:=(1000/FPS), global WinDPI := A_ScreenDPI, global MagOffset := 333, global SRCCOPY:="0x00CC0020", global x, global y, global Area_offset := 1.2*zoom, global magoffset, global ninjMagID, global MagSize
 
+; TOP LEVEL WINDOW UIBAND (NOT WORKING YET) ninjMagID := DllCall("CreateWindowInBand", "uint", 0, "str", "Autohotkey", "str", "title", "uint", 0, "int", 0, "int", 0, "int", 200, "int", 200, "ptr", 0, "ptr", 0, "ptr", 0, "ptr", 0, "int", ZBID_UIACCESS := 2, "ptr")
 
 Init_gui:
 gui +AlwaysOnTop +Resize +owner +ToolWindow +LastFound
+;Gui, +E0x02000000 +E0x00080000 ; WS_EX_COMPOSITED & WS_EX_LAYERED => Double Buffer
+
 gui +Hwndninjmagid 	;gui,Show,Hide ;get handle
 winSet, Style, 0x96000000
+DllCall("GetWindowBand", "ptr", ninjmagid, "uint*", band)
 ;winSet, EXStyle, 0x00200008
-	SetWinDelay -1
-	if !Resize_complete
-		gosub Region_set
+SetWinDelay -1
+if !Resize_complete
+	gosub Region_set
 mouseGetPos x, y
 global Offset_Matt2 := zoom*1.5
 Initial_X := (x-271) + Offset_Matt2 
@@ -48,20 +53,18 @@ loop {
 	mouseGetPos x, y
 	XXX := round((x-magoffset) + Area_offset), YYY := round((y-magoffset) + Area_offset)
 	if XXX < 0
-		xxx = 0
+		XXX = 0
 	if ( YYY < 0 ) {
 		yyy = 0
-		if (xxx > (x - (magsize+(magsize/3)) ))
-			XXX := xxx - 30
+		if (XXX > (x - (magsize+(magsize/3)) ))
+			XXX := XXX - 30
 			if XXX < 0
-			{
-				xxx = 0
-			}
+				XXX = 0
 	}
 	Zx := 300/Zoom, Zy := 300/Zoom
 
 /* 	
-if ((xxx > (x - (magsize+(magsize/2.5)))) and if (xxx < (x +(magsize+(magsize/2.5))))) and if ((yyy > (y - (magsize+(magsize/2.5)))) and if (y < (y + (magsize+(magsize/2.5))))) {
+if ((XXX > (x - (magsize+(magsize/2.5)))) and if (XXX < (x +(magsize+(magsize/2.5))))) and if ((yyy > (y - (magsize+(magsize/2.5)))) and if (y < (y + (magsize+(magsize/2.5))))) {
 		XXX := x + Area_offset 
 		YYY := y + Area_offset
 	} 
@@ -92,8 +95,7 @@ T_det:
 if (ElapsedTime := A_TickCount - StartTime) > 1000
 if KeyIsDown := GetKeyState("LWin", "P")
 	if (KeyIsDown := GetKeyState("m", "P")) {	
-		Paused := 1
-		Resize_complete := 
+		Paused := 1, Resize_complete := False
 		gui, 2:Hide 
 		gui, Hide 
 		toggling := True
@@ -130,15 +132,18 @@ return
 tooloff:
 tooltip
 return
+
 ;========================================================================================
-
-
-#B:: ;inverted colour toggle
+invert:
 Invert := !Invert
 	if Invert 
 		SRCCOPY:="0x00330008"
 	else 
 		SRCCOPY:="0x00CC0020"	; NOTSRCCOPY
+return
+
+#B:: ;inverted colour toggle
+settimer invert, -1
 return
 
 #M::
@@ -147,7 +152,6 @@ exitapp
 tooltip cu22222t %paused%,+50,+50,2
 
 if (!Paused or (paused := 0)) { 
-
 ;	menu, tray, noIcon
 	gui, 2:Hide 
 	gui, Hide 
@@ -157,7 +161,7 @@ if (!Paused or (paused := 0)) {
 } else {
 	if paused {
 tooltip cunt %paused%
-		Menu, Tray, Icon, C:\Script\AHK\Working\search_32.ico
+		menu, Tray, Icon, C:\Script\AHK\Working\search_32.ico
 		toggling := False
 		Paused :=
 exitapp
@@ -307,8 +311,6 @@ In(x,a,b)  {
 	Return x
 }
 
-
-
 #if WinExist("ninjMag") 		; 	- to Zoom -
 {
 	^+Up:: 								; 	CTRL + SHIFT + M_WHEEL_UP / DOWN 
@@ -362,6 +364,3 @@ In(x,a,b)  {
 	return
 }
 return
-
-
-
