@@ -1,7 +1,7 @@
 ﻿#include C:\Script\AHK\- LiB\GDI+.ahk        	;	ninjMag by Matt Wolff
 SetBatchLines -1                             	;	suggested to init from elevated script for hotkeys as below
-#NoEnv											;	#M::  	
-#SingleInstance force                        	;	+#M::	
+#NoEnv											
+#SingleInstance force                        	;	+#M::	Shif And M
 #Persistent                                  	;	Mag_Path := "C:\Program Files\Autohotkey\Autohotkey.exe C:\Script\AHK\Working\M2DRAG_MAG.AHK", 
 ListLines, Off                               	;	run % Mag_Path,
 SendMode Input                               	;	return,
