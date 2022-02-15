@@ -6,7 +6,7 @@ SetBatchLines -1                             	;	suggested to init from elevated 
 ListLines, Off                               	;	run % Mag_Path,
 SendMode Input                               	;	return,
 SetWinDelay -1                              	
-SetWorkingDir %A_ScriptDir%                  	;	2022 
+SetWorkingDir %A_ScriptDir%                  	;	2022.
 CoordMode Mouse, Screen                      	
 IniRead, LastScaleFactor, zoom.ini, LastScaleFactor, LastScaleFactor, 4
 
