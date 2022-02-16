@@ -17,7 +17,7 @@ menu, Tray, icon, 	Inverted, C:\Icon\20\invert goatse.ico
 menu, tray, standard
 
 global Antialias_on := 0, global Zoom := 8, global FPS := 60, global Zoom := LastScaleFactor, global MagSize := 300, global RefreshInterval := (1000/FPS), global WinDPI := A_ScreenDPI, global MagOffset := 333, global x, global y, global Area_offset := 1.2*zoom, global magoffset, global ninjMagID, global MagSize, global rim_, global Init_complete, global Offset_Matt2 
-
+global w := 300, global h := 300 
 SS_BITMAP    	:= 	0xE
 SS_ICON      	:= 	0x3
 STM_SETIMAGE 	:= 	0x172IMAGE_BITMAP 	:= 	0x0
@@ -39,11 +39,14 @@ gui, lens: new, +owner, ninjMag
 gui, lens: +LastFound +Hwndninjmagid -Caption -DPIScale +disabled +AlwaysOnTop -SysMenu +ToolWindow +owndialogs
 winSet, Style, 0x96000000
 winSet, EXStyle, 0x00200008
-gui, rim_:New, +hwndrim_y +Labelgui +parentlens +LastFound -Caption -DPIScale, ninjmag
+gui, rim_:New, +hwndrim_y +Labelgui +parentlens +LastFound +AlwaysOnTop -Caption -DPIScale, ninjmag
 
 gui, rim_:  +AlwaysOnTop +disabled -SysMenu +ToolWindow +owndialogs
 gui, rim_:Add, Pic, w%MagSize% h%MagSize% hwndHPIC
 WinSet, Transcolor, 000000 	;no alpha for now :(
+Gui, 1: New, +AlwaysOnTop +hwndhwndPic +parentlens +Labelgui -DPIScale
+Gui, 1: Add, Picture, x0 y0 w%w% h%h% 0xE hwndPic 
+
 if !Resize_complete
 	gosub Region_set
 mouseGetPos x, y
@@ -79,12 +82,22 @@ if !Init_complete {
 	; Assign the bitmap
 	SendMessage, STM_SETIMAGE, IMAGE_BITMAP, HBitmap, , ahk_id %HPIC%
 	WinSet, Transcolor, 000000 		; 	doesnt need full alpha so this gui, is done for now
+	p_Bitmap := Gdip_CreateBitmap(w, h), G := Gdip_GraphicsFromImage(p_Bitmap), Gdip_SetSmoothingMode(G, 4) 
+p_Brush := Gdip_CreateLineBrushFromRect(0, 0, w, h, 0xffff0000, 0x000000ff, 3, 1) 
+Gdip_FillEllipse(G, p_Brush, 0, 0, w, h) 
+SetImage(Pic, h_Bitmap := Gdip_CreateHBITMAPFromBitmap(p_Bitmap)) 
+	
 	hda_F := DllCall("GetDC", UInt, HPIC)
 	DllCall("gdi32.dll\SetStretchBltMode", "Uint", hda_f, "Int", 5)
 	DllCall("gdi32.dll\StretchBlt", "Uint",hda_f, "Int", 0, "Int", 0, "Int", 300 , "Int", 300 , "UInt", hd_frame, "UInt", 0, "UInt", 0, "Int", 300, "Int", 300, "UInt", "0x00440328")
 	DllCall("UpdateLayeredWindow", "Uint", rim_y, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", hda_f, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
+Gui, 1: Show 	
+;gui, rim_: Show, x-16 y-10 ; h%MagSize% x%Initial_x% y%Initial_Y% NoActivate
 	gui, lens: show
-	gui, rim_: Show, x-16 y-10 ; h%MagSize% x%Initial_x% y%Initial_Y% NoActivate
+
+Gdip_DeleteBrush(p_Brush) 
+DeleteObject(h_Bitmap), Gdip_DeleteGraphics(G), Gdip_DisposeImage(p_Bitmap) 
+Gdip_Shutdown(pToken)
 } else { 
 	tooltip, init complete	
 	settimer, tooloff, -700
