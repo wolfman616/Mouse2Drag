@@ -17,11 +17,34 @@ menu, Tray, icon, 	Inverted, C:\Icon\20\invert goatse.ico
 menu, tray, standard
 
 global Antialias_on := 0, global Zoom := 8, global FPS := 60, global Zoom := LastScaleFactor, global MagSize := 300, global RefreshInterval := (1000/FPS), global WinDPI := A_ScreenDPI, global MagOffset := 333, global x, global y, global Area_offset := 1.2*zoom, global magoffset, global ninjMagID, global MagSize, global rim_, global Init_complete, global Offset_Matt2 
-global w := 300, global h := 300 
+global w := 300, global h := 300, global mode1, global Numm := 1
 SS_BITMAP    	:= 	0xE
 SS_ICON      	:= 	0x3
-STM_SETIMAGE 	:= 	0x172IMAGE_BITMAP 	:= 	0x0
+STM_SETIMAGE 	:= 	0x172
+IMAGE_BITMAP 	:= 	0x0
 SRCCOPY			:= 	0x00CC0020
+
+BLACKNESS   	:= 0x00000042
+NOTSRCERASE 	:= 0x001100A6
+NOTSRCCOPY  	:= 0x00330008
+SRCERASE    	:= 0x00440328
+DSTINVERT   	:= 0x00550009
+PATINVERT   	:= 0x005A0049
+SRCINVERT   	:= 0x00660046
+SRCAND      	:= 0x008800C6
+MERGEPAINT  	:= 0x00BB0226
+MERGECOPY   	:= 0x00C000CA
+SRCCOPY     	:= 0x00CC0020
+SRCPAINT    	:= 0x00EE0086
+PATCOPY     	:= 0x00F00021
+PATPAINT    	:= 0x00FB0A09
+WHITENESS   	:= 0x00FF0062
+CAPTUREBLT  	:= 0x40000000
+NOMIRRORBITMAP	:= 0x80000000
+global ark := []
+ark := [BLACKNESS, NOTSRCERASE, NOTSRCCOPY, SRCERASE, DSTINVERT, PATINVERT, SRCINVERT, SRCAND, MERGEPAINT, MERGECOPY, SRCCOPY, SRCPAINT, PATCOPY, PATPAINT, WHITENESS, CAPTUREBLT, NOMIRRORBITMAP]
+
+mode1:=ark[4]
 
 ; TOP LEVEL WINDOW UIBAND (NOT WORKING YET) ninjMagID := DllCall("CreateWindowInBand", "uint", 0, "str", "Autohotkey", "str", "title", "uint", 0, "int", 0, "int", 0, "int", 200, "int", 200, "ptr", 0, "ptr", 0, "ptr", 0, "ptr", 0, "int", ZBID_UIACCESS := 2, "ptr")
 
@@ -39,14 +62,15 @@ gui, lens: new, +owner, ninjMag
 gui, lens: +LastFound +Hwndninjmagid -Caption -DPIScale +disabled +AlwaysOnTop -SysMenu +ToolWindow +owndialogs
 winSet, Style, 0x96000000
 winSet, EXStyle, 0x00200008
-gui, rim_:New, +hwndrim_y +Labelgui +parentlens +LastFound +AlwaysOnTop -Caption -DPIScale, ninjmag
+gui, rim_:New, +hwndrim_y +Labelgui +parentlens +LastFound +AlwaysOnTop -Caption -SysMenu +ToolWindow +owndialogs -DPIScale, ninjmag
 
 gui, rim_:  +AlwaysOnTop +disabled -SysMenu +ToolWindow +owndialogs
 gui, rim_:Add, Pic, w%MagSize% h%MagSize% hwndHPIC
 WinSet, Transcolor, 000000 	;no alpha for now :(
-Gui, 1: New, +AlwaysOnTop +hwndhwndPic +parentlens +Labelgui -DPIScale
+Gui, 1: New, +AlwaysOnTop +hwndhwndPic +parentlens +Labelgui -DPIScale -Caption -SysMenu +ToolWindow +owndialogs
 Gui, 1: Add, Picture, x0 y0 w%w% h%h% 0xE hwndPic 
-
+Gui, 2: New, +AlwaysOnTop +hwndhwndPic +parentlens +Labelgui -DPIScale -Caption -SysMenu +ToolWindow +owndialogs
+Gui, 2: Add, Picture, x0 y0 w%w% h%h% 0xE hwndPic 
 if !Resize_complete
 	gosub Region_set
 mouseGetPos x, y
@@ -82,18 +106,26 @@ if !Init_complete {
 	; Assign the bitmap
 	SendMessage, STM_SETIMAGE, IMAGE_BITMAP, HBitmap, , ahk_id %HPIC%
 	WinSet, Transcolor, 000000 		; 	doesnt need full alpha so this gui, is done for now
-	p_Bitmap := Gdip_CreateBitmap(w, h), G := Gdip_GraphicsFromImage(p_Bitmap), Gdip_SetSmoothingMode(G, 4) 
-p_Brush := Gdip_CreateLineBrushFromRect(0, 0, w, h, 0xffff0000, 0x000000ff, 3, 1) 
+gui, 1: +LastFound 
+WinSet, Transcolor, 000000	
+p_Bitmap := Gdip_CreateBitmap(w, h), G := Gdip_GraphicsFromImage(p_Bitmap), Gdip_SetSmoothingMode(G, 4) 
+p_Brush := Gdip_CreateLineBrushFromRect(0, 0, w, h, 0x00ffffff, 0xffffffff, 3, 1) 
 Gdip_FillEllipse(G, p_Brush, 0, 0, w, h) 
 SetImage(Pic, h_Bitmap := Gdip_CreateHBITMAPFromBitmap(p_Bitmap)) 
-	
-	hda_F := DllCall("GetDC", UInt, HPIC)
-	DllCall("gdi32.dll\SetStretchBltMode", "Uint", hda_f, "Int", 5)
-	DllCall("gdi32.dll\StretchBlt", "Uint",hda_f, "Int", 0, "Int", 0, "Int", 300 , "Int", 300 , "UInt", hd_frame, "UInt", 0, "UInt", 0, "Int", 300, "Int", 300, "UInt", "0x00440328")
-	DllCall("UpdateLayeredWindow", "Uint", rim_y, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", hda_f, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
-Gui, 1: Show 	
-;gui, rim_: Show, x-16 y-10 ; h%MagSize% x%Initial_x% y%Initial_Y% NoActivate
-	gui, lens: show
+	hda_ := DllCall("GetDC", "UInt", "poop")
+	hda_F := DllCall("GetDC", "UInt", hwndpic)
+	DllCall("gdi32.dll\SetStretchBltMode", "Uint", hdc_frame, "Int", 5)
+	DllCall("gdi32.dll\StretchBlt", "Uint",hda_f , "Int", 0, "Int", 0, "Int", 300 , "Int", 300 , "UInt", hdc_frame, "UInt", 0, "UInt", 0, "Int", 300, "Int", 300, "UInt", "0x00550009")
+	DllCall("UpdateLayeredWindow", "Uint", ninjmagid, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", hdc_frame, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
+ 	gui, lens: show
+Gui, 1: Show, x-12 y-8
+Gui, 1: hide
+Gui, 2: Show, x-12 y-8
+Gui, 2: hide
+
+gui, rim_: Show, x-16 y-10 ; h%MagSize% x%Initial_x% y%Initial_Y% NoActivate
+	sleep 100
+		Win_Move(ninjmagid, XXX, YYY, MagSize, MagSize, 22) ; SWP_NOZORDER + SWP_NOACTIVATE
 
 Gdip_DeleteBrush(p_Brush) 
 DeleteObject(h_Bitmap), Gdip_DeleteGraphics(G), Gdip_DisposeImage(p_Bitmap) 
@@ -134,11 +166,24 @@ loop {
 		ViewPos_X 	= 	0
 	if ViewPos_Y 	< 	0
 		ViewPos_Y 	= 	0
-	Win_Move(ninjmagid, XXX, YYY, MagSize, MagSize, 22) ; SWP_NOZORDER + SWP_NOACTIVATE
 	DllCall("gdi32.dll\StretchBlt",UInt,HDC_Frame, Int,0, Int,0, Int, magsize , Int, magsize , UInt, HDD_Frame, UInt,ViewPos_X, UInt,ViewPos_Y, Int,ViewX, Int,ViewY, UInt, SRCCOPY)  
-	DllCall("UpdateLayeredWindow", "Uint", rim_, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", HDD_Frame, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
-	DllCall("UpdateLayeredWindow", "Uint", ninjMagID, "Uint", 1, "Uint", 9, "int64P", 300|300<<32, "Uint", HDC_Frame, "int64P", 9, "Uint", 9, "intP", 0xFF<<16|1<<24, "Uint", 2)
+	Win_Move(ninjmagid, XXX, YYY, MagSize, MagSize, 22) ; SWP_NOZORDER + SWP_NOACTIVATE
+	DllCall("UpdateLayeredWindow", "Uint", ninjMagID, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", HDC_Frame, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
 }
+return
+
+#,::
+Numm:=Numm-1
+mode1:=ark[Numm]
+tooltip % mode1 " " Numm
+settimer tooloff, -500
+return
+
+#.::
+Numm:=Numm+1
+mode1:=ark[Numm]
+tooltip % mode1 " " Numm
+settimer tooloff, -500
 return
 
 Region_set:
@@ -169,7 +214,7 @@ else
 DllCall("gdi32.dll\SetStretchBltMode",Uint, HDC_Frame, int, 5)
 DllCall("gdi32.dll\StretchBlt",UInt,HDC_Frame, Int,0, Int,0, Int, MagSize , Int, MagSize , UInt, HDD_Frame, UInt,x-zx, UInt,y-zy, Int,2*Zx, Int,2*Zy, UInt, SRCCOPY)        
 DllCall("UpdateLayeredWindow", "Uint", ninjMagID, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", HDC_Frame, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
-DllCall("UpdateLayeredWindow", "Uint", rim_y, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", hda_f, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
+;DllCall("UpdateLayeredWindow", "Uint", rim_y, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", hda_f, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
 return
 
 OnExit guiClose 
@@ -192,7 +237,6 @@ tooltip
 return
 
 ;========================================================================================
-
 Invert:
 Invert := !Invert
 	if Invert 
@@ -207,7 +251,6 @@ return
 
 #M::
 exitapp
-
 
 ; if (!Paused or (paused := 0)) { 
 ;;	menu, tray, noIcon
@@ -227,8 +270,6 @@ exitapp
 	; }
 ; }
 ; return
-
-
 
 In(x,a,b)  { 
 	IfLess x,%a%, Return a
