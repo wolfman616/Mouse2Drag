@@ -101,35 +101,30 @@ if !Init_complete {
 	DllCall("Gdiplus.dll\GdipSetPathGradientFocusScales", "Ptr", PBrush, "Float", blurdevi8X, "Float", blurdevi8Y)
 	Gdip_FillPath(PGraphics, PBrush, PPath)
 	HBitmap := Gdip_CreateHBITMAPFromBitmap(PBitMap, 0x000000ff)
-	;Control, Style, -%SS_ICON%, , ahk_id %HPIC%
 	Control, Style, +%SS_BITMAP%, , ahk_id %HPIC%
-	; Assign the bitmap
 	SendMessage, STM_SETIMAGE, IMAGE_BITMAP, HBitmap, , ahk_id %HPIC%
-	WinSet, Transcolor, 000000 		; 	doesnt need full alpha so this gui, is done for now
-gui, 1: +LastFound 
-WinSet, Transcolor, 000000	
-p_Bitmap := Gdip_CreateBitmap(w, h), G := Gdip_GraphicsFromImage(p_Bitmap), Gdip_SetSmoothingMode(G, 4) 
-p_Brush := Gdip_CreateLineBrushFromRect(0, 0, w, h, 0x00ffffff, 0xffffffff, 3, 1) 
-Gdip_FillEllipse(G, p_Brush, 0, 0, w, h) 
-SetImage(Pic, h_Bitmap := Gdip_CreateHBITMAPFromBitmap(p_Bitmap)) 
+	WinSet, Transcolor, 000000
+	gui, 1: +LastFound 
+	WinSet, Transcolor, 000000	
+	p_Bitmap := Gdip_CreateBitmap(w, h), G := Gdip_GraphicsFromImage(p_Bitmap), Gdip_SetSmoothingMode(G, 4) 
+	p_Brush := Gdip_CreateLineBrushFromRect(0, 0, w, h, 0x00ffffff, 0xffffffff, 3, 1) 
+	Gdip_FillEllipse(G, p_Brush, 0, 0, w, h) 
+	SetImage(Pic, h_Bitmap := Gdip_CreateHBITMAPFromBitmap(p_Bitmap)) 
 	hda_ := DllCall("GetDC", "UInt", "poop")
 	hda_F := DllCall("GetDC", "UInt", hwndpic)
 	DllCall("gdi32.dll\SetStretchBltMode", "Uint", hdc_frame, "Int", 5)
 	DllCall("gdi32.dll\StretchBlt", "Uint",hda_f , "Int", 0, "Int", 0, "Int", 300 , "Int", 300 , "UInt", hdc_frame, "UInt", 0, "UInt", 0, "Int", 300, "Int", 300, "UInt", "0x00550009")
 	DllCall("UpdateLayeredWindow", "Uint", ninjmagid, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", hdc_frame, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
  	gui, lens: show
-Gui, 1: Show, x-12 y-8
-Gui, 1: hide
-Gui, 2: Show, x-12 y-8
-Gui, 2: hide
-
-gui, rim_: Show, x-16 y-10 ; h%MagSize% x%Initial_x% y%Initial_Y% NoActivate
-;	sleep 100
-		;Win_Move(ninjmagid, XXX, YYY, MagSize, MagSize, 22) ; SWP_NOZORDER + SWP_NOACTIVATE
-
-Gdip_DeleteBrush(p_Brush) 
-DeleteObject(h_Bitmap), Gdip_DeleteGraphics(G), Gdip_DisposeImage(p_Bitmap) 
-Gdip_Shutdown(pToken)
+	Gui, 1: Show, x-12 y-8
+	Gui, 1: hide
+	Gui, 2: Show, x-12 y-8
+	Gui, 2: hide
+	gui, rim_: Show, x-16 y-10 ; h%MagSize% x%Initial_x% y%Initial_Y% NoActivate
+	;Win_Move(ninjmagid, XXX, YYY, MagSize, MagSize, 22) ; SWP_NOZORDER + SWP_NOACTIVATE
+	Gdip_DeleteBrush(p_Brush) 
+	DeleteObject(h_Bitmap), Gdip_DeleteGraphics(G), Gdip_DisposeImage(p_Bitmap) 
+	Gdip_Shutdown(pToken)
 } else { 
 	tooltip, init complete	
 	settimer, tooloff, -700
@@ -170,27 +165,27 @@ loop {
 	Win_Move(ninjmagid, XXX, YYY, MagSize, MagSize, 22) ; SWP_NOZORDER + SWP_NOACTIVATE
 	DllCall("UpdateLayeredWindow", "Uint", ninjMagID, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", HDC_Frame, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
 }
-return
+return,
 
 #,::
 Numm:=Numm-1
 mode1:=ark[Numm]
 tooltip % mode1 " " Numm
 settimer, tooloff, -500
-return
+return,
 
 #.::
 Numm:=Numm+1
 mode1:=ark[Numm]
 tooltip % mode1 " " Numm
 settimer, tooloff, -500
-return
+return,
 
 Region_set:
 winSet, Region, 0-0 W%MagSize% H%MagSize% R%MagSize%-%MagSize%, ahk_id %ninjMagid%
 DllCall("UpdateLayeredWindow", "Uint", ninjMagID, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", HDC_Frame, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
 Resize_complete := 1
-return
+return,
 
 T_det:
 if (ElapsedTime := A_TickCount - StartTime) > 1000
@@ -201,7 +196,7 @@ if KeyIsDown := GetKeyState("LWin", "P")
 		gui, lens: Hide 
 		toggling := True
 	}
-return
+return,
 
 Repaint2:
 mouseGetPos x, y
@@ -215,7 +210,7 @@ DllCall("gdi32.dll\SetStretchBltMode",Uint, HDC_Frame, int, 5)
 DllCall("gdi32.dll\StretchBlt",UInt,HDC_Frame, Int,0, Int,0, Int, MagSize , Int, MagSize , UInt, HDD_Frame, UInt,x-zx, UInt,y-zy, Int,2*Zx, Int,2*Zy, UInt, SRCCOPY)        
 DllCall("UpdateLayeredWindow", "Uint", ninjMagID, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", HDC_Frame, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
 ;DllCall("UpdateLayeredWindow", "Uint", rim_y, "Uint", 0, "Uint", 0, "int64P", 300|300<<32, "Uint", hda_f, "int64P", 0, "Uint", 0, "intP", 0xFF<<16|1<<24, "Uint", 2)
-return
+return,
 
 OnExit guiClose 
 guiClose:
@@ -230,11 +225,11 @@ DllCall("gdi32.dll\DeleteDC", UInt,HDC_Frame )
 DllCall("gdi32.dll\DeleteObject", UInt,HDC_Frame)
 DllCall("gdi32.dll\DeleteDC", UInt,HDD_Frame )
 DllCall("gdi32.dll\DeleteObject", UInt,HDD_Frame)
-return
+return,
 
 tooloff:
 tooltip
-return
+return,
 
 ;========================================================================================
 Invert:
@@ -243,11 +238,11 @@ Invert := !Invert
 		SRCCOPY:="0x00330008"
 	else 
 		SRCCOPY:="0x00CC0020"	; NOTSRCCOPY
-return
+return,
 
 #B:: ;inverted colour toggle
 settimer, invert, -1
-return
+return,
 
 #M::
 exitapp
@@ -269,12 +264,12 @@ exitapp
 		; gosub Init_gui
 	; }
 ; }
-; return
+; return,
 
 In(x,a,b)  { 
-	IfLess x,%a%, Return a
-	IfLess b,%x%, Return b
-	Return x
+	IfLess x,%a%, return, a
+	IfLess b,%x%, return, b
+	return, x
 }
 
 #if WinExist("ninjMag") 		; 	- to Zoom -
@@ -314,20 +309,20 @@ In(x,a,b)  {
 	}
 	Area_offset := 1.2*zoom
 	settimer, Tooloff, -2000
-	return
+	return,
 
 	^+Left::	
 	MagSize := MagSize + 4
 	MagOffset := MagOffset + 4
 	Resize_complete := 
 	;settimer, Repaint2, -1
-	return		
+	return,		
 
 	^+Right:: 
 	MagSize := MagSize - 4
 	MagOffset := MagOffset - 4
 	Resize_complete := 
 	;settimer, Repaint2, -1
-	return
+	return,
 }
-return
+return,
