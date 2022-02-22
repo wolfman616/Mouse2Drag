@@ -56,8 +56,7 @@ reload_Adminhk()
 
 hotkey, % MD_Bind, m2Drag, On ; P ; Priority
 
-return
-
+return,
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ; Binds
@@ -69,73 +68,73 @@ mouseGetPos, X_, Y_, 	hVund, 	cVund
 winGet PN, ProcessName, ahk_id %hVund%
 winGetTitle	TI, 		ahk_id %hVund%
 winGetClass	CN, 		ahk_id %hVund%	
-if EXPLORER_MMB_OPENINNEW {
-	if (PN = "explorer.exe")  { 				; ((CN = "CabinetWClass") && 
+if EXPLORER_MMB_OPENINNEW 				{
+	if (PN = "explorer.exe")  			{ 		; ((CN = "CabinetWClass") && 
 		mouseGetPos, , , , cVund
-		if( cVund = "SysTreeView321") {			; msgbox % analtrackfield := Explorer_GetSelection(hWnd=hVund) ; NOT WORKING
+		if( cVund = "SysTreeView321") 	{		; msgbox % analtrackfield := Explorer_GetSelection(hWnd=hVund) 		 ; NOT WORKING
 			send ^{LButton}
-}	}	} else {
+}	}	} else 							{
 			send {MButton}
 		}
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ^+rButton:: 									;REGULAR RCLICK	 ; CTRL + SHIFT + RIGHTCLICK
 sendInput { rButton }
-if !Pube_count
-	Pube_count := 1
-else	pube_count := Pube_count + 1
-return
+if  !p_count
+	 p_count :=  1
+else p_count +=  1
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ; ^+LButton:: 	 								;REGULAR RCLICK	 ; CTRL + SHIFT + LCLICK
 ; send {LButton down}
-; return
+; return,
 ; ^+LButton up:: 	 							;REGULAR RCLICK	 ; CTRL + SHIFT + LCLICK
 ; send {LButton up}
-; return
+; return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~Esc::
 if winactive(ClassImgglass[1])
 	winClose, % ClassImgglass[1]
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #+LButton::PostMessage_2CursorWin(0x111, 41504, 0)
 if ErrorLevel
 	tooltip, %ErrorLevel% Error
 setTimer, ToolOff, -1000
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #+rButton::PostMessage_2CursorCTL(0x111, 41504, 0)
 if ErrorLevel
 	tooltip, %ErrorLevel% Error
 setTimer, ToolOff, -1000
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #MButton::
-gosub, winGetTransparency
-gosub, WinSetTransparency
-gosub, tooltipCreate
-return
+gosub, 	winGetTransparency
+gosub, 	WinSetTransparency
+gosub, 	tooltipCreate
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ^2::
-gosub, winGetTransparency
-Opacit0 -= 10
-gosub, WinSetTransparency
-gosub, tooltipCreate
-return
+gosub, 	winGetTransparency
+Opacit0 	-= 	10
+gosub, 	WinSetTransparency
+gosub, 	tooltipCreate
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ^3::
-gosub, winGetTransparency
-Opacit0 += 10
-gosub, WinSetTransparency
-gosub, tooltipCreate
-return
+gosub, 	winGetTransparency
+Opacit0 	+= 	10
+gosub, 	WinSetTransparency
+gosub, 	tooltipCreate
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ^f7:: 			; 		_-========set dwm blur Window========-_
 mouseGetPos, , , swindow, control2
 if !(swindow || control2)
 	tooltip no handle to window or Old_call
 SetAcrylicGlassEffect(bgrColor, 17, ahk_id swindow)
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ^+f7:: 			;	 _-========set dwm blur Control handle========-_
 mouseGetPos, , , swindow, control2
@@ -146,7 +145,7 @@ SetAcrylicGlassEffect(bgrColor, 17, ahk_id %Old_call%)
 SetAcrylicGlassEffect(bgrColor, 17, ahk_id %control2%)
 tooltip %Old_call%
 settimer tooloff, -3000
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Handle_Handler_Toggle:
 ^#Mbutton:: 		; CTRL + WIN + MIDDLE=MOUSE ( aKa MOUSEWHEEL BUTTON )
@@ -154,7 +153,7 @@ if !Handle_Handler_Active {
 	menu, submenu1, check, Handle Handler,
 	setTimer CursorTip, 30
 	Handle_Handler_Active := True
-	return
+	return,
 	~^#c:: 				; 								CTRL WIN C
 	if WindowUnderCursorInfo
 		CopyOF_ := True
@@ -165,7 +164,7 @@ if !Handle_Handler_Active {
 	WindowUnderCursorInfo := "", CopyOF_ := ""
 	Handle_Handler_Active := !Handle_Handler_Active 	; TOGGLE - INFO - DISPLAY
 
-	return
+	return,
 } else {													;	gosub, Handle_Handler_Toggle
 	menu, submenu1, uncheck, Handle Handler,
 	sleep 100
@@ -174,16 +173,16 @@ if !Handle_Handler_Active {
 	WindowUnderCursorInfo := ""
 }
 Handle_Handler_Active := !Handle_Handler_Active 	; TOGGLE - INFO - DISPLAY
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ~!rbutton:: 	; 		ALT + Rbutton   -	 WinEvent/Style/Bypass Menu   
-mousegetpos, , , rbhwnd
-DragbypassClass_new_possible := "ahk_id " . rbhwnd
-return
+mousegetpos, , , RBhWnd
+DragbypassClass_new_possible := "ahk_id " . RBhWnd
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #F10:: 			;		Wacom Barrel 1 Button
 if(a_thishotkey = "#F10") {
@@ -192,8 +191,8 @@ if(a_thishotkey = "#F10") {
 }
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 m2Drag:			;		M2Drag MOUSE 2  	 <========================= 		BEGINS   
-	mouseGetPos, X_mSt4, Y_MSt4, rbhwnd, rbcnthwnd
-	wingetpos, X_Win, Y_Win, W_Win, H_Win, ahk_id %rbhwnd%	
+	mouseGetPos, X_mSt4, Y_MSt4, RBhWnd, rbcnthwnd
+	wingetpos, X_Win, Y_Win, W_Win, H_Win, ahk_id %RBhWnd%	
 
 if(a_thishotkey	= "rButton") {
 	MD_Bind	:= a_thishotkey	
@@ -202,7 +201,7 @@ if(a_thishotkey	= "rButton") {
 if (Bypass_title_True || Bypass_pname_True || Bypass_Class_True) 
 {
 	settimer bloocks, -1
-	return
+	return,
 }
 
 if !RB_D { 
@@ -210,31 +209,31 @@ if !RB_D {
 	gosub, position_offset_get
 	RB_D := True
 }
-if (EvaluateBypass_Class(rbhwnd) ) {
+if (EvaluateBypass_Class(RBhWnd) ) {
 
 	Bypass_Class_True :=	True
 	;tooltip pric
 	gosub, BypassDrag
-	return
+	return,
 }
 else
-if (EvaluateBypass_Proc(rbhwnd) ) {
+if (EvaluateBypass_Proc(RBhWnd) ) {
 	Bypass_pname_True :=	True
 	;tooltip pric
 	gosub, BypassDrag
-	return
+	return,
 }
 else
-if (EvaluateBypass_Title(rbhwnd) ) {
+if (EvaluateBypass_Title(RBhWnd) ) {
 	Bypass_title_True :=	True
 	;tooltip pric
 gosub, BypassDrag
 ;==----============----
-	return
+	return,
 }
 
 ; } else gosub, M2_Drag_Ready
-; return
+; return,
 else {
 
 	M2_Drag_Ready:
@@ -248,7 +247,7 @@ if !M1_Trigger {
 	H_WinS := H_Win
 
 	if MD_Activ8Def
-winactivate, ahk_id %rbhwnd%
+winactivate, ahk_id %RBhWnd%
 	if winexist(FF_ContextClass) 	;	 Firefox menu
 		winClose
 		else
@@ -263,7 +262,7 @@ winactivate, ahk_id %rbhwnd%
 	while (getKeyState(MD_Bind, MD_Meth)) {
 		mouseGetPos, X_Cursor, Y_Cursor,
 
-		wingetpos, X_Win, Y_Win, , , ahk_id %rbhwnd%
+		wingetpos, X_Win, Y_Win, , , ahk_id %RBhWnd%
 		
 		gosub, position_offset_get
 		if ( X_Cursor != X_Old ) and ( Y_Cursor != Y_Old ) {
@@ -277,7 +276,7 @@ winactivate, ahk_id %rbhwnd%
 				HH :=
 			} else {
 				mousegetpos, 	X_mSt4, 	Y_MSt4
-				wingetpos, 		X_Wins, 	Y_Wins, 	W_Wins, 	H_Wins, 	ahk_id %rbhwnd%
+				wingetpos, 		X_Wins, 	Y_Wins, 	W_Wins, 	H_Wins, 	ahk_id %RBhWnd%
 				;winGetClass, ClassN, % ( id_ . hWnd),
 				;if ClassN != CabinetWClass
 				ww := WII, HH := HII
@@ -289,14 +288,14 @@ winactivate, ahk_id %rbhwnd%
 			if !(getKeyState("LButton", "P") ) {
 				if M1_Trigger {
 					mousegetpos, 	X_mSt4, 	Y_MSt4
-					wingetpos, 		X_Wins, 	Y_Wins, 	W_Wins, 	H_Wins, 	ahk_id %rbhwnd%		
+					wingetpos, 		X_Wins, 	Y_Wins, 	W_Wins, 	H_Wins, 	ahk_id %RBhWnd%		
 					x0x	:= (X_Wins)	
 					y0y := (Y_Wins)		;gosub, position_offset_get ;gosub, corner_offset_get ;gosub, DimensionChk
-					Win_Move(rbhwnd, x0x, y0y,,, "")
+					Win_Move(RBhWnd, x0x, y0y,,, "")
 				}
 				if !lbdd 
 				{
-					Win_Move(rbhwnd, x0x, y0y,,, "")
+					Win_Move(RBhWnd, x0x, y0y,,, "")
 				}
 			} else {
 				gosub, position_offset_get
@@ -306,7 +305,7 @@ winactivate, ahk_id %rbhwnd%
 			if !XYThresh {			; 		Movement-thresh, afterwhich single click is	; 	Add a time thresh too
 				if (X_Cursor<X_mSt4-25) || (X_Cursor>X_mSt4+25) || (Y_Cursor<Y_MSt4-25) || (Y_Cursor>Y_MSt4 +25) {
 					if !triglb1 {
-						DragbypassClass_new_possible =ahk_id %rbhwnd%
+						DragbypassClass_new_possible =ahk_id %RBhWnd%
 						menu, tray, add, Bypass the last Dragged window, Bypass_Last_Dragged_GUI,
 						Dragbypassmenu_enabled := True
 						XYThresh := True
@@ -316,7 +315,7 @@ winactivate, ahk_id %rbhwnd%
 			;PROB HEERE :(
 				Status_M2Drag := True 	; 		m2drag begins  _>
 				if (getKeyState("LButton", "P") ) {
-					mouseGetPos, , , rbhwnd, rbcnthwnd
+					mouseGetPos, , , RBhWnd, rbcnthwnd
 
 					if !M1_Trigger {								
 						M1_Trigger := True
@@ -326,7 +325,7 @@ winactivate, ahk_id %rbhwnd%
 					gosub, corner_offset_get
 					gosub, position_offset_get
 					} 
-					;wingetpos,		X_Win, Y_Win, , , ahk_id %rbhwnd%
+					;wingetpos,		X_Win, Y_Win, , , ahk_id %RBhWnd%
 					;mouseGetPos,	X_Cursor, Y_Cursor
 					settimer Watch_Lb, -1
 				} else {
@@ -334,27 +333,27 @@ winactivate, ahk_id %rbhwnd%
 		}	}	}
 
 		if !insight {
-			winGet, m2d_WinState, MinMax, ahk_id %rbhwnd%
+			winGet, m2d_WinState, MinMax, ahk_id %RBhWnd%
 			CursorChange := 1, insight := 1
 			if (m2d_WinState = 1) { ; maximized
 				while (getKeyState(MD_Bind , MD_Meth) ) {
 					if !XYThresh {
 						if (X_Cursor<X_mSt4 -25) || (X_Cursor>X_mSt4 +25) || (Y_Cursor<Y_MSt4 -25) || (Y_Cursor>Y_MSt4 +25) {
 							XYThresh := True
-							DragbypassClass_new_possible =ahk_id %rbhwnd%
-							mouseGetPos, X_mSt4, Y_MSt4, rbhwnd
-							wingetpos, X_Win, Y_Win, W_Win, H_Win, ahk_id %rbhwnd%
+							DragbypassClass_new_possible =ahk_id %RBhWnd%
+							mouseGetPos, X_mSt4, Y_MSt4, RBhWnd
+							wingetpos, X_Win, Y_Win, W_Win, H_Win, ahk_id %RBhWnd%
 						} else {
 							mouseGetPos, X_Cursor, Y_Cursor
 							if (X_Cursor<(X_mSt4-25)) || (X_Cursor>(X_mSt4+25)) || (Y_Cursor<(Y_MSt4-25)) || (Y_Cursor>(Y_MSt4+25)) {
 								m2d_MidW 	:= A_ScreenWidth/3, 	m2d_MidX := X_Cursor-(W_Win/2)
 								m2d_MidY 	:= Y_Cursor-(H_Win/3), 	m2d_MidH := A_ScreenHeight/2
-								winRestore, ahk_id %rbhwnd%
-								wingetpos, X_Win, Y_Win, W_Win, H_Win, ahk_id %rbhwnd%
-								Win_Move(rbhwnd, m2d_MidX, m2d_MidY, , ,  "")
+								winRestore, ahk_id %RBhWnd%
+								wingetpos, X_Win, Y_Win, W_Win, H_Win, ahk_id %RBhWnd%
+								Win_Move(RBhWnd, m2d_MidX, m2d_MidY, , ,  "")
 				}	}	}	}
 				if XYThresh
-					DragbypassClass_new_possible =ahk_id %rbhwnd%
+					DragbypassClass_new_possible =ahk_id %RBhWnd%
 		}	}
 		sleep 1
 	} 		;		end of main "Mdrag while-loop"					
@@ -366,42 +365,42 @@ winactivate, ahk_id %rbhwnd%
 	if M1Resize
 		settimer m1_resizeGO, -1
 	insight := "", XYThresh := False ;, ; M1Resize := False
-return
+return,
 } 
-return
+return,
 
 testi:
 
 
-if (EvaluateBypass_Class(rbhwnd) ) {
+if (EvaluateBypass_Class(RBhWnd) ) {
 
 	Bypass_Class_True :=	True
 	;tooltip pric
 	;gosub, BypassDrag
-	return
+	return,
 }
 else
-if (EvaluateBypass_Proc(rbhwnd) ) {
+if (EvaluateBypass_Proc(RBhWnd) ) {
 	Bypass_pname_True :=	True
 	;tooltip pric
 	;gosub, BypassDrag
-	return
+	return,
 }
 else
-if (EvaluateBypass_Title(rbhwnd) ) {
+if (EvaluateBypass_Title(RBhWnd) ) {
 	Bypass_title_True :=	True
 	;tooltip pric
 ;gosub, BypassDrag
 ;==----============----
-	return
+	return,
 }
-return
+return,
 
 BypassDrag:
 ;click, down, right
 SEND {%MD_Bind% DOWN}
 mousegetpos, 	X_mSt4, 	Y_MSt4
-wingetpos, 		X_Win, 		Y_Win, 		W_Win, 		H_Win, 		ahk_id %rbhwnd%
+wingetpos, 		X_Win, 		Y_Win, 		W_Win, 		H_Win, 		ahk_id %RBhWnd%
 
 if !XYThresh { ; threshold of xy movement, afterwhich no longer a standard right click
 	while (getKeyState(MD_Bind, MD_Meth) ) {
@@ -411,10 +410,10 @@ lbdd := True
 	}
 
 	mousegetpos, 	X_Cursor, 	Y_Cursor
-		wingetpos, 		X_Win, 		Y_Win, 		W_Win, 		H_Win, 		ahk_id %rbhwnd%
+		wingetpos, 		X_Win, 		Y_Win, 		W_Win, 		H_Win, 		ahk_id %RBhWnd%
 		if (X_Cursor<X_mSt4-25) || (X_Cursor>X_mSt4+25) || (Y_Cursor<Y_MSt4-25) || (Y_Cursor>Y_MSt4+25) {
 			if !triglb1 {
-				DragAllowClass_new_possible =ahk_id %rbhwnd%
+				DragAllowClass_new_possible =ahk_id %RBhWnd%
 				menu, tray, NoStandard
 				menu, tray, add, Add last attempted window drag to whitelist, Open_Options_GUI,
 				menu, tray, standard
@@ -427,7 +426,7 @@ send {%MD_Bind% Up}
 
 insight := "", XYThresh := False, triglb1 := False, Bypass_Class_True := False, 	Bypass_pname_True := False, lbdd := False,	Bypass_title_True := False	
 settimer, cleanRBVars, -1
-return
+return,
 
 BypassDrag2:
 send { %MD_Bind% Down }
@@ -436,30 +435,30 @@ while getKeyState(MD_Bind, MD_Meth)
 send {%MD_Bind% Up}
 
 insight := "", XYThresh := False, triglb1 := False
-return
+return,
 
 m1_resizeGO:
 mousegetpos, 	X_Cursor, 	Y_Cursor
 ;gosub, corner_offset_get
 gosub, DimensionChk
 ;ww := WII, HH := HII
-return
+return,
 getKeyState, KSLB, LButton, P
 if (KSLB = "D") {
 	if LB_U {
 		M1_Trigger := False
 		LB_U := False	; ?
-		;wingetpos, X_Win, Y_Win, W_Win, H_Win, ahk_id %rbhwnd%
+		;wingetpos, X_Win, Y_Win, W_Win, H_Win, ahk_id %RBhWnd%
 		;XOff := (X_mSt4 - X_Win), YOff := (Y_MSt4 - Y_Win)
 	}
 }
 else settimer m1_resizeGO, off		
 RB_D := False, triglb1 := False, XYThresh := False
-return
+return,
 
 Watch_Lb:
 if !OC1 {
-	wingetpos, X_Win, Y_Win, , , ahk_id %rbhwnd%
+	wingetpos, X_Win, Y_Win, , , ahk_id %RBhWnd%
 	Y_MSt4 := Y_Cursor,	X_mSt4 := X_Cursor,	OC1 := 	True
 }
 x_NET := X_mSt4 - X_Cursor
@@ -481,7 +480,7 @@ if LB_U {
 	}
 }
 RB_D := False, triglb1 := False
-return
+return,
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -490,11 +489,11 @@ return
 ; +F9:: 
 ; TT("Nib Down")
 ; sendinput {LButton Down}
-; return
+; return,
 ; +F9 up::
 ; TT("Nib Up")
 ; sendinput {LButton Up}
-; return
+; return,
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -508,17 +507,17 @@ WinGetClass, LB_Class, ahk_id %LB_hWnd%
 if !Status_M2Drag {
 	send {Lbutton Down}
 	;send {LButton up}
-	return
+	return,
 }
 else {	;PostMessage, 0x00A1, 17, ahk_id %LB_cWnd%
 	if( LB_Class = "CabinetWClass") {
 		while getKeyState("LButton", "P") {
-			settimer position_offset_get2, 1	; Win_Move(rbhwnd, x0x, y0y, wii, Hii, "")
+			settimer position_offset_get2, 1	; Win_Move(RBhWnd, x0x, y0y, wii, Hii, "")
 			sleep 1								; settimer m1_resizeGO, -1
 		}
-		return									; if !getKeyState("LButton", "P") 
-}	}											; return			
-return
+		return,									; if !getKeyState("LButton", "P") 
+}	}											; return,			
+return,
 
 ; LB_hWnd := ("ahk_id" . LB_hWnd), 	LB_cWnd := ("ahk_id" . LB_cWnd)
 ; WinGetClass, LB_ClassN, %LB_hWnd%
@@ -549,8 +548,8 @@ return
 		; IfMsgBox, Yes								; 5-sec timeout.
 			; winclose,
 		; if ((IfMsgBox, No) || (IfMsgBox, Timeout))
-			; return
-		; return
+			; return,
+		; return,
 	 ; }
 	; case "#32770":									; (msg box class)
 	; { 												; #IfWinActive ahk_exe notepad++.exe
@@ -571,7 +570,7 @@ return
 				; if Clipboard =% oldclip
 					; tt("ctrl-c Failed")
 		; }	}
-		; return
+		; return,
 	; }
 	; case "tooltips_class32":
 	; {
@@ -580,9 +579,9 @@ return
 		; tooltip, Copied tool-tip, X, (Y+25)
 		; sleep 888
 		; WinClose
-		; return
+		; return,
 	; } 
-; return
+; return,
 ; }
 ; if Status_M2Drag
 	; LB_D := True
@@ -595,13 +594,13 @@ return
 ; send {Lbutton up}
 ; LB_D := False
 ; LB_U := True
-; return
+; return,
 
 ;~$LButton UP:: 
   LBUTTON UP::
 SETTIMER POSITION_OFFSET_GET2, OFF
 mousegetpos, 	X_mSt4, 	Y_MSt4
-wingetpos, 		X_Wins, 	Y_Wins, 	W_Wins, 	H_Wins, 	ahk_id %rbhwnd%		
+wingetpos, 		X_Wins, 	Y_Wins, 	W_Wins, 	H_Wins, 	ahk_id %RBhWnd%		
 	x0x	:= (X_Wins + Xnet)	
 y0y := (Y_Wins + Ynet)
 gosub, corner_offset_get
@@ -614,15 +613,15 @@ LB_D := False
 settimer cleanlbvars, -1
 click left up
 fff := False
-return
+return,
 
 ; ~^Lbutton up::
 ; ~$Lbutton up:: 
-; return
+; return,
 
 cleanLBVars:
 LB_ClassN_old := LB_ClassN, LB_ClassN := "", class_active := "", LB_hWnd := "", LB_cWnd := "", LB_D := False
-return
+return,
 
 cleanRBVars:
 Bypass_Class_True := False, 	Bypass_pname_True := False, 	Bypass_title_True := False	
@@ -633,21 +632,21 @@ x0x := 0
 y0y := 0
 ww := 0
 HH := 0
-return
+return,
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #lbutton:: 	; Press Win+LB to turn off transparency for the Window under the mouse.
 mouseGetPos,,, MouseWin
 WinSet, TransColor, Off, ahk_id %MouseWin%
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #!g:: ; Press Win+G to show the current settings of the Window under the mouse.
 mouseGetPos,,,MouseWin
 winGet, Transparent, Transparent, ahk_id %MouseWin%
 winGet, TransColor, TransColor, ahk_id %MouseWin%
 tooltip `n Translucency:`n%Transparent%`nTransColor:`t%TransColor%
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 WheelUp::
@@ -656,12 +655,12 @@ For key, value in ClassImgglass
 	concatenated := "ahk_class " . value
 	if (winactive(concatenated)) {
 		SEND {LEFT}
-		return
+		return,
 	}
 	else SEND {WheelUp}
 
 } 
-return
+return,
 
 WheelDown::
 For key, value in ClassImgglass
@@ -669,25 +668,25 @@ For key, value in ClassImgglass
 	concatenated := "ahk_class " . value
 	if (winactive(concatenated)) {
 		SEND {RIGHT}
-		return
+		return,
 	}
 	else SEND {WheelDown}
 
 } 
-return
+return,
 
 +^WheelUp:: 	 		;>====FIX icons on desktop as zooming====>
 mouseGetPos, X_Cursor, Y_Cursor, ahk_id_CHECK
 winGetClass, AHK_Class_check, ahk_id %ahk_id_CHECK%,,
 if(AHK_Class_CHECK= "WorkerW") || (AHK_Class_CHECK="Progman")
 	Dtop_icons_Restore()
-return
+return,
 +^WheelDown::
 mouseGetPos, X_Cursor, Y_Cursor, ahk_id_CHECK
 winGetClass, AHK_Class_check, ahk_id %ahk_id_CHECK%,,
 if (AHK_Class_CHECK= "WorkerW") || (AHK_Class_CHECK="Progman")
 	Dtop_icons_Restore()
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -738,7 +737,7 @@ if Mouse_WinClass in MozillaWindowClass,MozillaCompositorWindowClass,Chrome_Widg
 }
 else
 	Send, { PgUp }
-return
+return,
 
 f17::		; 	Wheel r = page down without interfering with selection
 ^f17::
@@ -782,7 +781,7 @@ if Mouse_WinClass in MozillaWindowClass,MozillaCompositorWindowClass1,Chrome_Wid
 }
 else
 	Send, { PgDn }
-return
+return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -798,7 +797,7 @@ r00la(byref x, byref y) {
 	Kraby := Abs(Y_Cursor-y)
 	R_return := " "X_Cursor ", " Y_Cursor "`n"
 	. "X:" krabx " Y:" kraby ""
-	return R_return
+	return, R_return
 }
 CursorTip:
 coordMode tooltip, screen
@@ -815,7 +814,7 @@ if ( WindowUnderCursorInfo != WindowUnderCursorInfoOld )	{	;fixes flicker
 	tooltip %WindowUnderCursorInfo%, %TTX% , %TTY%
 	WindowUnderCursorInfoOld=% WindowUnderCursorInfo
 }
-return
+return,
 
 GetUnderCursorInfo(ByRef X_Cursor, ByRef Y_Cursor) {
 	coordMode mouse, screen
@@ -860,7 +859,7 @@ GetUnderCursorInfo(ByRef X_Cursor, ByRef Y_Cursor) {
 	getKeyState, kik, f9, P
 	if kik = D 	; Button released, drag carried out.
 	SetAcrylicGlassEffect(bgrColor, 17, ahk_id window)
-	return WindowUnderCursorInfo ; . HexToDec("0x" SubStr(BGR_Color, 5, 2)) ", "; . HexToDec("0x" SubStr(BGR_Color, 7, 2)) ")`n"
+	return, WindowUnderCursorInfo ; . HexToDec("0x" SubStr(BGR_Color, 5, 2)) ", "; . HexToDec("0x" SubStr(BGR_Color, 7, 2)) ")`n"
 }
 
 Win_Move(Hwnd, X="", Y="", W="", H="", Flags="") {
@@ -884,7 +883,7 @@ Win_Move(Hwnd, X="", Y="", W="", H="", Flags="") {
 		if h=
 			h := ch
 	} else hFlags |= SWP_NOSIZE
-	return DllCall("SetWindowPos", "uint", Hwnd, "uint", 0, "int", x, "int", y, "int", w, "int", h, "uint", hFlags)
+	return, DllCall("SetWindowPos", "uint", Hwnd, "uint", 0, "int", x, "int", y, "int", w, "int", h, "uint", hFlags)
 }
 
 Win_Get(Hwnd, pQ="", ByRef o1="", ByRef o2="", ByRef o3="", ByRef o4="", ByRef o5="", ByRef o6="", ByRef o7="", ByRef o8="", ByRef o9="") {
@@ -896,7 +895,7 @@ Win_Get(Hwnd, pQ="", ByRef o1="", ByRef o2="", ByRef o3="", ByRef o4="", ByRef o
 		if (_ := SubStr(pQ, k, 1)) = ""
 			break
 		if !IsLabel("Win_Get_" _ )
-			return A_ThisFunc "> Invalid query parameter: " _
+			return, A_ThisFunc "> Invalid query parameter: " _
 		Goto %A_ThisFunc%_%_%
 		Win_Get_C:
 		winGetClass, o%i%, ahk_id %hwnd%
@@ -960,12 +959,12 @@ Win_Get(Hwnd, pQ="", ByRef o1="", ByRef o2="", ByRef o3="", ByRef o4="", ByRef o
 		o%i% := buf
 		continue
 	}
-	return o1
+	return, o1
 }
 
 Win_GetRect(hwnd, pQ="", ByRef o1="", ByRef o2="", ByRef o3="", ByRef o4="") {
 	VarSetCapacity(RECT, 16), r := DllCall("GetWindowRect", "uint", hwnd, "uint", &RECT)
-	ifEqual, r, 0, return
+	ifEqual, r, 0, return,
 	if (pQ = "") or pQ = ("*")
 	retAll := True, pQ .= "xywh"
 	xx := NumGet(RECT, 0, "Int"), yy := NumGet(RECT, 4, "Int")
@@ -982,7 +981,7 @@ Win_GetRect(hwnd, pQ="", ByRef o1="", ByRef o2="", ByRef o3="", ByRef o4="") {
 		o%A_Index% := NumGet(RECT, 8, "Int") - xx - ( lx ? lx : 0)
 	else if A_LoopField = h
 		o%A_Index% := NumGet(RECT, 12, "Int") - yy - ( ly ? ly : 0 )
-	return retAll ? o1 " " o2 " " o3 " " o4 : o1
+	return, retAll ? o1 " " o2 " " o3 " " o4 : o1
 }
 
 SetSystemCursor() {
@@ -990,19 +989,19 @@ SetSystemCursor() {
 	Cursors = %Cursor_int%,32512
 	loop , Parse, Cursors, `,
 	DllCall( "SetSystemCursor", Uint,CursorHandle, Int,A_LoopField )
-	return
+	return,
 }
 
 RestoreCursors() {
 	SPI_SETCURSORS := 0x57
 	DllCall( "SystemParametersInfo", UInt,SPI_SETCURSORS, UInt,0, UInt,0, UInt,0 )
-	return
+	return,
 }
 
 In(x,a,b) {
-	IfLess x,%a%, return a
-	IfLess b,%x%, return b
-	return x
+	IfLess x,%a%, return, a
+	IfLess b,%x%, return, b
+	return, x
 }
 
 HexToDec(HexVal) {
@@ -1010,7 +1009,7 @@ HexToDec(HexVal) {
 	SetFormat IntegerFast, D
 	DecVal := HexVal + 0
 	SetFormat IntegerFast, %Old_A_FormatInteger%
-	return DecVal
+	return, DecVal
 }
 
 PostMessage_2CursorWin(Message, wParam = 0, lParam=0) {
@@ -1034,7 +1033,7 @@ PostMessage_2CursorCTL(Message, wParam = 0, lParam=0) {
 
 XY_INIT:
 X_Old:="", Y_Old:="", toolX:="", toolY:="", X_Cursor:="", Y_Cursor:="", x:="", y:="", Thresh_Breach:=""
-return
+return,
 
 Toggle_Win_Drag_State:
 if MD_Activ8Def {
@@ -1044,7 +1043,7 @@ if MD_Activ8Def {
 	menu, submenu1, check, Raise window when Dragged,
 	MD_Activ8Def := True
 }
-return
+return,
 
 SetBk(hWnd, ghWnd, bc, tc=0xff0000) {
 	a := {}
@@ -1062,7 +1061,7 @@ WindowProc(hWnd, uMsg, wParam, lParam) {
 	{
 		DllCall("SetTextColor", "UInt", wParam, "UInt", Win[hWnd, lparam, "tc"] )
 		DllCall("SetBkColor", "UInt", wParam, "UInt", Win[hWnd, lparam, "bc"] )
-		return Win[hWnd, lparam, "Brush"] ; return the HBRUSH to notify the OS that we altered the HDC.
+		return, Win[hWnd, lparam, "Brush"] ; return the HBRUSH to notify the OS that we altered the HDC.
 	}
 	if (hWnd = "Set") {
 		a := uMsg
@@ -1073,9 +1072,9 @@ WindowProc(hWnd, uMsg, wParam, lParam) {
 			DllCall("DeleteObject", "Ptr", Brush)
 		Win[a.gh, a.ch, "Brush"] := DllCall("CreateSolidBrush", "UInt", a.bc)
 		; array_list(Win)
-		return
+		return,
 	}
-	return DllCall("CallWindowProcA", "UInt", Win[hWnd, "WindowProcOld"], "UInt", hWnd, "UInt", uMsg, "UInt", wParam, "UInt", lParam)
+	return, DllCall("CallWindowProcA", "UInt", Win[hWnd, "WindowProcOld"], "UInt", hWnd, "UInt", uMsg, "UInt", wParam, "UInt", lParam)
 }
 
 SetAcrylicGlassEffect(thisColor, thisAlpha, hWnd) {
@@ -1088,83 +1087,83 @@ SetAcrylicGlassEffect(thisColor, thisAlpha, hWnd) {
 	&& NumPut(&ACCENT_POLICY, WINCOMPATTRDATA, 4 + pad, "ptr")
 	&& NumPut(64, WINCOMPATTRDATA, 4 + pad + A_PtrSize, "uint")
 	if !(DllCall("user32\SetWindowCompositionAttribute", "ptr", hWnd, "ptr", &WINCOMPATTRDATA))
-		return
+		return,
 	accent_size := VarSetCapacity(ACCENT_POLICY, 16, 0)
-	return
+	return,
 }
 
 
 Dtop_icons_Get() {
 	RunWait, Dicons_write.ahk
-	return
+	return,
 }
 Dtop_icons_Restore() {
 	RunWait, Dicons_recover.ahk
-	return
+	return,
 }
 clicked() {
 	tooltip, % Message_Click
 	setTimer, tool1off, -1000
-	return
+	return,
 }
 contextmenRclicked() {
 	tooltip, % Message_Menu_Clicked
 	setTimer, tool1off, -1000
-	return
+	return,
 }
 abort_Mdrag() {
 	tooltip, % Message_M2drag_Abort
 	setTimer, tool1off, -1000
-	return
+	return,
 }
 m2_released() {
 	tooltip % Message_M2_Released
 	setTimer, tool1off, -1000
-	return
+	return,
 }
 mdrag_active() {
 	tooltip, % Message_Drag_Active
-	return
+	return,
 }
 ThreadFail() {
 	tooltip, %Message_Thread_Fail%, (A_ScreenWidth // 2), (A_ScreenWidth // 2)
 	setTimer, tool1off, -3000
-	return
+	return,
 }
 Context_killed() {
 	tooltip, %Message_Menu_Killed%,,,4
 	setTimer, tool4off, -1000
-	return
+	return,
 }
 Quick_L_click() {
 	tooltip % Message_Click_Fast
 	setTimer, tool1off, -1000
-	return
+	return,
 }
 L_Released() {
 	tooltip, %Message_Click_Release%,,,4
 	setTimer, tool4off, -1000
-	return
+	return,
 }
 L_clicked_Desktop() {
 	tooltip, %Message_Click_DTop%, (X_Cursor+100), (Y_Cursor+20)
 	setTimer, Tool1Off, -750
-	return
+	return,
 }
 Clicked_Somewhere() {
 	tooltip, %Message_Click_Other%
 	setTimer, Tool1Off, -750
-	return
+	return,
 }
 LButton_Held() {
 	tooltip %Message_held_DTop%
 	setTimer, Tool1Off, -750
-	return
+	return,
 }
 touching_file() {
 	tooltip, %Message_Touching% , toolx, tooly,4
 	setTimer, Tool4Off, -750
-	return
+	return,
 }
 toolXOff(Index) {
 	Tool%Index%Off:
@@ -1173,28 +1172,28 @@ toolXOff(Index) {
 
 Win_Activate:
 winactivate, ahk_id %hWnd%
-return
+return,
 
 
 Tool1Off:
 tooltip,,,,1
-return
+return,
 Tool2Off:
 tooltip,,,,2
-return
+return,
 Tool3Off:
 tooltip,,,,3
-return
+return,
 Tool4Off:
 tooltip,,,,4
-return
+return,
 Tool5Off:
 tooltip,,,,5
-return
+return,
 
 _Feed_:
 global Message_Click:="::Clicked::", global Message_Menu_Clicked:="Context Menu Clicked", global Message_M2drag_Abort:="Aborting Drag", global Message_M2_Released:="released mouse2", global Message_Drag_Active:="Window drag activated' n - Mouse 1 to Cancel", global Message_Thread_Fail:="GetGUIThreadInfo failure", global Message_Menu_Killed:="menu killed", global Message_Click_Fast:="Quick click::", global Message_Click_Release:="mouse 1 released", global Message_Click_DTop:="Left Clicked Desktop", global Message_Click_Other:="clicked elsewhere", global Message_held_DTop:="clickheld on desktop", global Message_Touching:="touching file", global Message_Moved :="%FailState% ...`n %X% %X_Cursor% %y% %Y_Cursor%`n Movement detected `n %x1% %x2% %y1% %y2%, %x%, %75%"
-return
+return,
 
 winGetTransparency:
 mouseGetPos, , , hWnd
@@ -1202,12 +1201,12 @@ if (Trans_%hWnd% = "")
 Trans_%hWnd% := 100
 Trans := Trans_%hWnd%
 Opacit0 := Trans
-return
+return,
 
 WinSetTransparency:
 winGetClass, WindowClass, ahk_id %hWnd%
 if WindowClass = Progman
-return
+return,
 Opacit0 := (Opacit0 < 10) ? 10 : (Opacit0 > 100) ? 100 : Opacit0
 Alpha0 := Trans * 2.55		; Init. Alpha
 Alpha := Round(Opacit0 * 2.55)	; Final Alpha
@@ -1236,7 +1235,7 @@ loop {
 		a -= AlphaIncrement
 	} else Alpha0 := Alpha
 }
-return
+return,
 
 tooltipCreate:
 c := Floor(Trans / 4)
@@ -1254,17 +1253,17 @@ tooltipText .= "|"
 tooltip, %tooltipText%
 mouseGetPos, MouseX0, MouseY0
 setTimer, tooltipdestroy
-return
+return,
 
 tooltipdestroy:
 if (A_TimeIdle < 1000) {
 	mouseGetPos, MouseX, MouseY
 	if (MouseX = MouseX0 && MouseY = MouseY0)
-		return
+		return,
 }
 setTimer, tooltipdestroy, Off
 tooltip,
-return
+return,
 
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1272,13 +1271,13 @@ CleanUp:
 gosub, Bypass_Parse_Array
 gosub, kill_self
 
-return
+return,
 
 corner_offset_get:
 XOff := (X_mSt4 - X_WinS)	
 YOff := (Y_MSt4 - Y_WinS)
 ;tooltip % XOff " ww " YOff " hh " ,,,2
-return
+return,
 
 position_offset_get:
 mousegetpos, X_Cursor, Y_Cursor,
@@ -1288,11 +1287,11 @@ if !(XOff || y0y)
 	gosub, corner_offset_get
 x0x	:= (W_Wins - Xnet)	
 y0y := (h_Wins - Ynet)
-return
+return,
 
 position_offset_get2:
 KOON := 1.3
-LB_hWnd := rbhwnd
+LB_hWnd := RBhWnd
 mousegetpos, X_Cursor, Y_Cursor,
 Xnet 	:= (x_MSt4 - (x_Cursor))
 Ynet 	:= (y_MSt4 - (y_Cursor))
@@ -1300,8 +1299,8 @@ x0x		:= (x_Win - (KOON * Xnet))
 y0y 	:= (y_Win - (KOON * Ynet))
 W_Win := (W_WinS - (KOON*Xnet))
 h_Win := (h_WinS - (KOON*Ynet))
-;Win_Move(rbhwnd, x0x, y0y, , , "")
-return
+;Win_Move(RBhWnd, x0x, y0y, , , "")
+return,
 
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1329,7 +1328,7 @@ Send_WM_COPYDATA(ByRef StringToSend, ByRef Path_WinEvent)
 	 SendMessage, 0x4a, 0, &CopyDataStruct,, %Path_WinEvent%,,,, %TimeOutTime%
 	 DetectHiddenWindows %Prev_DetectHiddenWindows% ; 
 	 SetTitleMatchMode %Prev_TitleMatchMode% 
-	 return ErrorLevel 
+	 return, ErrorLevel 
 }
 
 Receive_WM_COPYDATA(wParam, lParam)
@@ -1349,7 +1348,7 @@ Receive_WM_COPYDATA(wParam, lParam)
 			settimer Bypass_Last_Dragged_GUI, -1
 			}
 	 ; ToolTip %A_ScriptName%`nReceived the query %CopyOfData% 			;settimer tooloff, -2000
-	 return True ; Returning 1 (True) to acknowledge message.
+	 return, True ; Returning 1 (True) to acknowledge message.
 }
 
 Open_Options_GUI:
@@ -1358,10 +1357,10 @@ gui 	+HwndOptions_Hwnd
 gui, 	Optiona:add, hotkey, wp vhotkey gHotkeyEvent w100 h21 0x200
 gui, 	Optiona:add, button, default w80, OK
 gui, 	Optiona:Show
-return
+return,
 GuiClose(Options_Hwnd) {
 	gosub, HotkeyEvent
-	return ; end of auto-execute section
+	return, ; end of auto-execute section
 }
 
 Menu_Init:
@@ -1382,7 +1381,7 @@ if ( MD_DefaultDragAll = True ) {
 menu, tray, add, Settings, :SubMenu1
 menu, tray, standard
 menu, tray, Icon, mouse24.ico
-return
+return,
 
 ;---------------------------------------------------------------------------------------
 
@@ -1397,12 +1396,12 @@ if hotkey {
 	else hotkeycurrent=%hotkey%
 }
 hotkey, %hotkeycurrent%, my_h
-return
+return,
 ;---------------------------------------------------------------------------------------
 my_h:
 tooltip % hotkeycurrent
 settimer tooloff, -1000
-return
+return,
 
 Bypass_Last_Dragged_GUI: 		;		 DragbypassClass_new_possible 		; ahk_id %hwnd%
 winGet DragbypassClass_new_possibleProcName, ProcessName, %DragbypassClass_new_possible%
@@ -1417,7 +1416,7 @@ gui, BypassDragged:add, button, default gBlacklistGUISubmit w80, Add To BlackLis
 gui, BypassDragged:add, button, w80 gBlacklistGUIDestroy, Cancel (Esc)
 gui, show, center, Bypass_Last_Dragged_GUI
 OnMessage(0x200, "Help")
-return
+return,
 
 BlacklistGUISubmit:
 gui, BypassDragged:Submit
@@ -1443,7 +1442,7 @@ if TClass {
 BlacklistGUIDestroy:
 gui, BypassDragged:destroy
 TProcName := "", TTitle := "", TClass := ""
-return
+return,
 
 DimensionChk:
 WII := (W_Win + Xnet)
@@ -1466,14 +1465,14 @@ y0y := (Y_Cursor - Ynet)
 			y0y	:= 	-1000
 	else if	y0y	>	2000
 		y0y	:= 	2000	
-return
+return,
 
 ;-------------------------------------------------------------------------------
 SliderEvent: ; slider changes come here
 ;-------------------------------------------------------------------------------
 GuiControlGet, Slider ; get new value for Slider
 GuiControl,, Text, %Slider%
-return
+return,
 ;-------------------------------------------------------------------------------
 ;-------------------------------------------------------------------------------
 AimControl(a, s) { ; control mouse speed
@@ -1484,12 +1483,12 @@ AimControl(a, s) { ; control mouse speed
 MouseSlow: ; use slow mouse speed
 ;-------------------------------------------------------------------------------
 AimControl(1, Slider)
-return
+return,
 ;-------------------------------------------------------------------------------
 MouseNormal: ; use normal mouse speed
 ;-------------------------------------------------------------------------------
 AimControl(0, 0)
-return
+return,
 
 MD_DefaultDragAll_toggle:
 m2drag_Active := !m2drag_Active
@@ -1516,7 +1515,7 @@ if m2drag_Active {
 	MD_DefaultDragAll := False
 	menu, submenu1, Uncheck, m2Drag all by default,
 }
-return
+return,
 
 
 TT(TxT="") {
@@ -1529,25 +1528,25 @@ Blacklist_RegRead:
 regRead, Bypass_ClassList,	HKEY_CURRENT_USER\SOFTWARE\_Mouse2Drag, Blacklist_ClassList
 regRead, Bypass_TitleList,	HKEY_CURRENT_USER\SOFTWARE\_Mouse2Drag, Blacklist_TitleList
 regRead, Bypass_ProcList,	HKEY_CURRENT_USER\SOFTWARE\_Mouse2Drag, Blacklist_ProcessList
-return
+return,
 
 Blacklist_ParseArr:
 tooltip Parsing Blacklist
  
-nigger =
-loop, Parse, Bypass_ProcList, % "`, "
+loop, Parse, Bypass_ProcList, `,
 {	
 	if(a_index = 1) {
 		BypassProcListStr := A_LoopField
-		BypassProccListArr[A_Index] := A_LoopField 
+		BypassProccListArr[1] := A_LoopField 
 	}
 	
 	else{
-		BypassProccListArr[A_Index] := (nigger . A_LoopField)
+		BypassProccListArr[A_Index] := A_LoopField
 		if(a_index < 21) {
 			BypassProcListStr := ( BypassProcListStr "," A_LoopField)	
 			BlacklistProcCount := A_Index
-}	}	}
+		} else, msgbox,% "ErrorBypassing Proc",% "More than 21 Blacklisted .Exes"
+	}	}
 
 
 loop, Parse, Bypass_ClassList, `,
@@ -1570,9 +1569,9 @@ loop, Parse, Bypass_TitleList, `,
 		BypassTitleListStr := (BypassTitleListStr . "," . q . A_LoopField . q)
 	BlacklistTitleCount := A_Index
 }
-tooltip Finished parsing Blacklist
+tooltip, "Finished parsing Blacklist."
 settimer tooloff, -350
-return
+return,
 
 Bypass_Parse_Array:
 for index, value in BypassProccListArr
@@ -1606,56 +1605,54 @@ Bypass_TitleList := TitleList
 EvaluateBypass_Class(hWnd) {
 	winGetClass, ClassN,% ( id_ . hWnd)
 	if  BypassClassListStr contains %ClassN%
-		return 1
-return 0
+		return, 1
+	return, 0
 }
 
 EvaluateBypass_Proc(hWnd) {
-anus=StartMenuExperienceHost.exe
+	startmenu=StartMenuExperienceHost.exe
 	fagg =% ( BypassProccListArr[2] BypassProccListArr[1]  BypassProccListArr[3]  BypassProccListArr[4] b BypassProccListArr[5] b BypassProccListArr[6] b BypassProccListArr[7] b BypassProccListArr[8] b BypassProccListArr[9] b BypassProccListArr[10] b BypassProccListArr[11] b BypassProccListArr[12] b BypassProccListArr[13] b BypassProccListArr[14] b BypassProccListArr[15] b BypassProccListArr[16] b BypassProccListArr[17] b BypassProccListArr[18] b BypassProccListArr[19] b BypassProccListArr[20] z)
-;	msgboX % fagg "`n" g " " q
-	;cooncunt =% "BypassProccListArr[2]" 
-	;msgbox % cooncunt
+
 	winGet ProcN, ProcessName, % id_ hWnd,
 	if BypassProcListStr contains %procn%
-		return 1
+		return, 1
 	switch ProcN {
-		case anus:
-			return 1
+		case startmenu:
+			return, 1
 		case (Bypass_ProcList contains ProcN):
-			return 1
+			return, 1
 		default:
-			return 0	
+			return, 0	
 		case fagg:
-			return 1
+			return, 1
 }	}
 
 
 EvaluateBypass_Title(hWnd) {
 	winGetTitle, Titl3, % id_ . hWnd,
 		if Titl3 in %BypassTitleListStr%
-		return 1
+		return, 1
 	
 	switch Titl3 {
 		case BypassTitleListArr[1], BypassTitleListArr[2], BypassTitleListArr[3], BypassTitleListArr[4], BypassTitleListArr[5], BypassTitleListArr[6], BypassTitleListArr[7], BypassTitleListArr[8], BypassTitleListArr[9], BypassTitleListArr[10], BypassTitleListArr[11], BypassTitleListArr[12], BypassTitleListArr[13], BypassTitleListArr[14], BypassTitleListArr[15], BypassTitleListArr[16], BypassTitleListArr[17], BypassTitleListArr[18], BypassTitleListArr[19], BypassTitleListArr[20]:
-		return 1
+		return, 1
 
 		default:
-			return 0
+			return, 0
 	}
 }
-return
+return,
 
 BP_RegDelete:
 RegDelete, HKEY_CURRENT_USER\SOFTWARE\_Mouse2Drag, Blacklist_ClassList
 RegDelete, HKEY_CURRENT_USER\SOFTWARE\_Mouse2Drag, Blacklist_ProcessList
 RegDelete, HKEY_CURRENT_USER\SOFTWARE\_Mouse2Drag, Blacklist_TitleList
-return
+return,
 BP_RegWrite:
 regWrite, REG_SZ, HKEY_CURRENT_USER\SOFTWARE\_Mouse2Drag, Blacklist_ClassList, 		%ClassList%
 regWrite, REG_SZ, HKEY_CURRENT_USER\SOFTWARE\_Mouse2Drag, Blacklist_ProcessList, 	%ProcList%
 regWrite, REG_SZ, HKEY_CURRENT_USER\SOFTWARE\_Mouse2Drag, Blacklist_TitleList, 		%TitleList%
-return
+return,
 
 Vars:
 Sleep2 := 2000, Mag := 0, XX := 0, YY := 0, m1resize := 1, AlphaIncrement := 0.2, 
@@ -1676,43 +1673,16 @@ ClassImgglass[2] 		:= 	"AHK_Class " . ClassPicView2
 BypassTitleListArr		:=	[]
 BypassClassListArr		:= 	[]
 BypassProccListArr 		:= 	[]
-global DragbypassClass_new_possible, global Bypass_ProcList, global BlacklistProcCount, global BlacklistClassCount, global BlacklistTitleCount, global PID, global ControlhWnd, global Cursor_int, global CursorChange, global m2d_OriginalWidth, global m2d_OriginalHeight, global ccc, global ddd, global XYThresh, global X,  global Y, global ToolX, global ToolY, global TTX, global TTY, global ZWidth2, global Zheight2, global ZWidth, global Zheight, global X_Start_OLD, global Y_Start_OLD, global OriginalPosX, global OriginalPosY, global X_Old, global Y_Old, global m2d_MidX, global m2d_MidY, global H_Win, global W_Win, global y_NET, global y_NETold, global x_NET, global x_NETold, global hWnd, global hotkey, global TClass, global TProcName, global TTitle, global pube_count, global TClass, global TProcName, global TTitle, global Bypass_TitleList, global Bypass_ClassList, global Bypass_ProcList, global CopyOF_, global M1Resize, global Status_M2Drag, global LB_D, global RB_D, global M1_Trigger, global MD_Meth, global BypassClassListStr := "", global NIGGER_1, global q, global g, global Bypass_title_True, global Bypass_pname_True, global Bypass_Class_True, global BypassTitleListArr, global BypassClassListArr, global BypassProccListArr, global , global MD_Activ8Def := True, global dbgTT := True,global iD_ := "ahk_id "
-global rbhwnd
-global BypassProcListStr
-global HII 	:= 0
-global HH 	:= 0
-global ww 	:= 0
-global WII 	:= 0
-global y0y 	:= 0
-global x0x 	:= 0
-global Ynet := 0
-global Xnet := 0
-global XOff	:= 0
-global YOff	:= 0
-global X_WinS := 0
-global Y_WinS := 0
-global H_WinS := 0
-global W_WinS := 0
-global X_Cursor := 0
-global Y_Cursor := 0
-global X_mSt42 	:= 0
-global Y_MSt42 	:= 0
-global X_mSt4 	:= 0
-global Y_MSt42 	:= 0
-global X_Win 	:= 0
-global Y_Win 	:= 0
-global rbcnthwnd := 0x0
-global lbdd
-global nigger
-global gaylove
+global DragbypassClass_new_possible, global Bypass_ProcList, global BlacklistProcCount, global BlacklistClassCount, global BlacklistTitleCount, global PID, global ControlhWnd, global Cursor_int, global CursorChange, global m2d_OriginalWidth, global m2d_OriginalHeight, global ccc, global ddd, global XYThresh, global X,  global Y, global ToolX, global ToolY, global TTX, global TTY, global ZWidth2, global Zheight2, global ZWidth, global Zheight, global X_Start_OLD, global Y_Start_OLD, global OriginalPosX, global OriginalPosY, global X_Old, global Y_Old, global m2d_MidX, global m2d_MidY, global H_Win, global W_Win, global y_NET, global y_NETold, global x_NET, global x_NETold, global hWnd, global hotkey, global TClass, global TProcName, global TTitle, global p_count, global TClass, global TProcName, global TTitle, global Bypass_TitleList, global Bypass_ClassList, global Bypass_ProcList, global CopyOF_, global M1Resize, global Status_M2Drag, global LB_D, global RB_D, global M1_Trigger, global MD_Meth, global BypassClassListStr := "", global q, global g, global Bypass_title_True, global Bypass_pname_True, global Bypass_Class_True, global BypassTitleListArr, global BypassClassListArr, global BypassProccListArr, global , global MD_Activ8Def := True, global dbgTT := True,global iD_ := "ahk_id "
+global RBhWnd, global BypassProcListStr, global HII, global HH, global ww, global WII, global y0y, global x0x, global Ynet, global Xnet, global XOff, global YOff, global X_WinS, global Y_WinS, global H_WinS, global W_WinS, global X_Cursor, global Y_Cursor, global X_mSt42, global Y_MSt42, global X_mSt4, global Y_MSt42, global X_Win, global Y_Win, global rbcnthwnd, global lbdd, global BypassClassListDfault, global b
+
+
 BypassClassListDfault = "WORKERW" , "gdkWindowToplevel"
-global BypassClassListDfault
 g := " , "
 q ="
 z="
 b = " . %q% . "
-global b
-return
+return,
 
 kill_self:
 Gui, Optiona:destroy
@@ -1725,7 +1695,7 @@ loop, Parse, CleanUpList, `,
 }
 if (A_exitReason = "")
 	setTimer, CleanUp, Off
-return
+return,
 
 InvokeVerb(path, menu, validate=True) {
 	objShell := ComObjCreate("Shell.Application")
@@ -1745,9 +1715,9 @@ InvokeVerb(path, menu, validate=True) {
 			StringReplace, retmenu, retmenu, & 
 			if (retmenu = menu) {
 				verb.DoIt
-				return True
+				return, True
 		}	}
-			return False
+			return, False
 	} else
 	objFolderItem.InvokeVerbEx(menu)
 } 
