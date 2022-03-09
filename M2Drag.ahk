@@ -25,16 +25,16 @@
 #persistent
 #installmousehook
 #KeyHistory,            0
-ListLines, 			    Off
-#singleinstance,	    Force
-coordMode, 			    Mouse, screen
-coordMode, 			    Pixel, screen
-SendMode,			    Input
-SetMouseDelay,          -1
-#MaxThreadsPerHotkey, 	10
+ListLines,              Off
+#singleinstance,        Force
+coordMode,              Mouse, screen
+coordMode,              Pixel, screen
+SendMode,               Input
+SetMouseDelay,         -1
+#MaxThreadsPerHotkey,   10
 #MaxHotkeysPerInterval, 1400
-setBatchLines,		   -1
-setWinDelay,		   -1
+setBatchLines,         -1
+setWinDelay,           -1
 setWorkingDir,%         A_ScriptDir
 settitlematchmode,      2 
 ;---------------------------------------------------------------------------------------
