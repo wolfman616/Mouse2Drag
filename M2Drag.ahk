@@ -20,7 +20,6 @@
 	(Quit application hotkey default = Ctrl & Shift & Win & RightClick (MouseWheelButton).)	
 	More to be added.                                                                                    Matt Wolff 2022
 */			
-		 
 #noenv
 #persistent
 #installmousehook
@@ -38,12 +37,10 @@ setWinDelay,           -1
 setWorkingDir,%         A_ScriptDir
 settitlematchmode,      2 
 ;---------------------------------------------------------------------------------------
-
-#Include <circle>
 #Include <gdi+_all>
 #Include <LayeredWindow> 
+#Include <circle>
 ;---------------------------------------------------------------------------------------
-
 gosub, Varz 
 gosub, Blacklist_RegRead
 gosub, Blacklist_ParseArr
@@ -64,8 +61,8 @@ reload_Adminhk()
 
 hotkey, % MD_Bind, m2Drag, On ; P ; Priority
 
-CUR_FX_Enabled    :=  True
-Trailz_enabled    :=  TRue
+CUR_FX_Enabled    :=  false 
+Trailz_enabled    :=  false
 curhilite_enabled :=  False
 settimer CUR_FX_Enable, -1
 return, ;--------=========    ; end of script   ; end of script   ; end of script   ; end of script   ; end of scr
@@ -83,23 +80,16 @@ if EXPLORER_MMB_OPENINNEW 				{
 	if (PN = "explorer.exe")  			{ 		; ((CN = "CabinetWClass") && 
 		mouseGetPos, , , , cVund
 		if( cVund  =  "SysTreeView321") 	{   ; msgbox % analtrackfield := Explorer_GetSelection(hWnd=hVund) 	
-			    send ^{LButton}	                ; NOT WORKING Either :/
-}	}	} else, send  {MButton}
+			    send, ^{LButton}	                ; NOT WORKING Either :/
+}	}	} else, send,  {MButton}
 return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-^+rButton:: 									;REGULAR RCLICK	 ; CTRL + SHIFT + RIGHTCLICK
-sendInput { rButton }
-if  !p_count
-	 p_count :=  1
-else p_count +=  1
+~^+rButton:: 									;REGULAR RCLICK	 ; CTRL + SHIFT + RIGHTCLICK
+sendInput, { rButton }
+; if  !p_count
+	 ; p_count :=  1
+; else p_count +=  1
 return,
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-; ^+LButton:: 	 								;REGULAR RCLICK	 ; CTRL + SHIFT + LCLICK
-; send {LButton down}
-; return,
-; ^+LButton up:: 	 							;REGULAR RCLICK	 ; CTRL + SHIFT + LCLICK
-; send {LButton up}
-; return,
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #+LButton::PostMessage_2CursorWin(0x111, 41504, 0)
@@ -156,10 +146,11 @@ return,
 Handle_Handler_Toggle:
 if !Handle_Handler_Active {
 	menu, submenu1, check, Handle Handler,
-	setTimer CursorTip, 30
+	setTimer CursorTip, 300
 	Handle_Handler_Active := True
+	hotkey, ~^#c, HandlerCopyinfo
 	return,
-	~^#c:: 				; 								 CTRL WIN C
+	HandlerCopyinfo: 				; 								 CTRL WIN C
 	if WindowUnderCursorInfo
 		CopyOF_ := True
 	mouseGetPos, X_Cursor, Y_Cursor, Window, Control
@@ -168,7 +159,8 @@ if !Handle_Handler_Active {
 	WindowUnderCursorInfo := "", CopyOF_ := ""
 	Handle_Handler_Active := !Handle_Handler_Active 	; TOGGLE - INFO - DISPLAY
 	return,
-} else {										        ; gosub, Handle_Handler_Toggle
+} else {	
+	hotkey, ^#c, off
 	menu, submenu1, uncheck, Handle Handler,
 	sleep 100
 	setTimer, CursorTip, off
@@ -828,6 +820,7 @@ GetUnderCursorInfo(ByRef X_Cursor, ByRef Y_Cursor) {
 }
  
 /* 
+
 Win_Move(Hwnd, X="", Y="", W="", H="", Flags="") {
 	;	static bitmask SWP_NOMOVE=2, SWP_NOREDRAW=8, SWP_NOSIZE=1, SWP_NOZORDER=4, SWP_NOACTIVATE = 0x10, SWP_ASYNCWINDOWPOS=0x4000, HWND_BOTTOM=1, HWND_TOPMOST=-1, HWND_NOTOPMOST = -2
 	static SWP_NOMOVE=2, SWP_NOSIZE=1, SWP_NOZORDER=4, SWP_NOACTIVATE = 0x10, SWP_R=8, SWP_A=0x4000
@@ -949,7 +942,9 @@ Win_GetRect(hwnd, pQ="", ByRef o1="", ByRef o2="", ByRef o3="", ByRef o4="") {
 		o%A_Index% := NumGet(RECT, 12, "Int") - yy - ( ly ? ly : 0 )
 	return, retAll ? o1 " " o2 " " o3 " " o4 : o1
 }
- */
+
+*/
+ 
 SetSystemCursor() {
 	CursorHandle := DllCall( "LoadCursor", Uint,0, Int,Cursor_int )
 	Cursors = %Cursor_int%,32512
