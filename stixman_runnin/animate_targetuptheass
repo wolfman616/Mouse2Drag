@@ -1,0 +1,221 @@
+﻿; animation with sequentially named series of ico files 
+if (A_Args.Length() < 1) {
+	msgbox,0,Inabumho,No args,1000
+	exitapp,
+}
+#noEnv 
+;#notrayicon
+;SetTitleMatchMode,%  "Slow"
+#SingleInstance,       off
+DetectHiddenWindows,% "On"
+DetectHiddenText,%    "On"
+SetTitleMatchMode,     2	
+SETWINDELAY,          -1
+SETBATCHLINES,        -1
+setWorkingDir,%    a_scriptDir
+
+global frames,framestring,fps_desired,fps_sleep,Playing,filePath,OutFileName,OutDir,hund,uid,current,OutDir,OutExtension,OutNameNoExt,pprev
+SplitPath, 1,,OutDir,OutExtension,OutNameNoExt
+gui, Slav3:	 New,,OutNameNoExt                    ; Dummy gui to reg SH_WM_
+gui, Slav3: +LastFound +hwnd_Hw1nd  ; Hw1nd := WinExist() also works
+gui, Slav3:	 Show,,% 1
+gui, Slav3:	 Hide
+WM_Allow() 
+OnMessage(0x4a, "Receive_WM_COPYDATA") ; 0x4a is WM_COPYDATA
+	if 		   0 != 1 	    ; Not run with parameter
+		FileSelectFile, filePath ,,% "D:\Documents\My Pictures\",% "select",% "iCO Files (*.ICO)"
+	else if     0 = 1	    ; run with parameter from menus
+	{ 
+		;Menu, Tray, NoIcon
+		loop, parse, 1,% ";",
+		{
+			if      (a_index = "1")
+				filePath    := a_loopfield
+			else if (a_index = "2")
+				    hund    := a_loopfield
+			else if (a_index = "3")
+				     uid    :=  a_loopfield
+		}
+		if !(fileexist( filePath ) ) {
+			msgbox,,%   "Error",% "Cant find `n" filePath	; nO sequence of icons found (1.ico, 2.ico, 3.ico)
+			FileSelectFile, filePath ,,% "D:\Documents\My Pictures\",% "select",% "iCO Files (*.ICO)"
+}	}
+
+
+if !res:=regeXmatch(OutNameNoExt, "(\d+)(?!\w)") {
+	msgbox,5,% "error with selected filename",% "must be sequentially named series of icons with numeric suffix`nlike myicon1.ico / myicon2.ico"	
+	ifmsgbox retry
+		reload,
+	ifmsgbox cancel
+		exitapp,
+} else, ico_pfix:=regeXreplace(OutNameNoExt, "(\d+)(?!\w)", "")
+if hund
+	(%ico_pfix%hund)    := hund
+if uid
+	(%ico_pfix%uid)     := uid
+	else 	(%ico_pfix%uid)     := Format("{:s}", uid)
+
+(%ico_pfix%frame_index) := []
+(%ico_pfix%hbitmaps)    := {}
+
+IniRead, fps_desired,% (OutDir . "\" . ico_pfix . ".ini"), animationinfo, fpsdesired, 8
+IniRead, frameindex,%  (OutDir . "\" . ico_pfix . ".ini"), animationinfo, frames
+
+if fps_desired 
+	  fps_sleep := ( 1000 / ((%ico_pfix%fps_desired) := fps_desired) )
+else  fps_sleep :=   100
+
+if frameindex {
+
+	loop, parse, frameindex, `,
+	{
+	
+		(%ico_pfix%frame_index)[a_index] := a_loopfield
+		(%ico_pfix%frames) := A_index ; count total
+		framestring .= a_loopfield . ","
+		
+	}	
+	
+	loop,% (%ico_pfix%frames) {
+		varprefix%a_index% := (OutDir . "\" . ico_pfix . a_index . ".ico")
+		VarSetCapacity(varprefix_i%a_index%, fisize := A_PtrSize + 688)
+		if 	DllCall("shell32\SHGetFileInfoW", "WStr", varprefix%a_index%, "UInt", 0, "Ptr", &varprefix_i%a_index%, "UInt", fisize, "UInt", 0x100)
+		{
+			(%ico_pfix%hbitmaps)[a_index]:= ({"HpGfx" : (io:=(NumGet(varprefix_i%a_index%, 0, "Ptr"))) : "name" : (varprefix%a_index%)})
+			(%ico_pfix%hbitmaps).insertat((_:=(a_index+(%ico_pfix%frames))),(ablo:=(%ico_pfix%hbitmaps)[a_index].HpGfx))
+		;msgbox % (%ico_pfix%hbitmaps)[(_:=(a_index+(%ico_pfix%frames)))]
+		} 
+	}		;	(%ico_pfix%hbitmaps[current+(%ico_pfix%frames)].HpGfx) := (%ico_pfix%hbitmaps[current].HpGfx)
+
+	
+} else, niggerfcunt:=framecount()
+
+ if (niggerfcunt:=framecount())
+ {
+	tt(TRANiCONz "STARTING with " frames " frames")
+	;	menu, tray, check,% "animation (toggle)" 
+		settimer, Icon_animation_loop_init, -200
+}  else, {
+	msgbox Err no framecount
+	exitapp
+}
+Icon_animation_loop_init:
+if  (!frames && !(%ico_pfix%frames) )
+	 return,
+else,
+if   frames
+	 TheBusiness(%ico_pfix%hund,%ico_pfix%uid,(varprefix_h%current%))
+else,TheBusiness(%ico_pfix%hund,%ico_pfix%uid,(%ico_pfix%frames)) 
+Playing := True
+return,
+
+Icon_animation_toggle:
+  tt(a_now)
+	   Playing := !Playing
+if     Playing 
+       settimer, Icon_animation_loop_init, -500
+else,  loop, 2 {
+	   settimer, Icon_animation_loop_init, off
+	   sleep, 500
+}
+return,
+
+framecount() {
+global ico_pfix,frames
+	loop {
+	
+	 spasticcunt:=OutDir . "\" . ico_pfix . a_index . ".ico"
+	
+		if !( exist := fileexist((spasticcunt)) )
+		{
+frames := a_index -1 
+if !frames {
+msgbox, 0 frames
+			return, 0
+
+} else, 	return, frames
+			}
+		else {
+			varprefix%a_index% := (OutDir . "\" . ico_pfix . a_index . ".ico")
+			VarSetCapacity(varprefix_i%a_index%, fisize := A_PtrSize + 688)
+			if DllCall("shell32\SHGetFileInfoW", "WStr", varprefix%a_index%, "UInt", 0, "Ptr", &varprefix_i%a_index%, "UInt", fisize, "UInt", 0x100)
+			varprefix_h%a_index% := NumGet(varprefix_i%a_index%, 0, "Ptr") 
+}	}	}
+
+TheBusiness(hWnd:="", u_i_D:="", framen:="") {
+	global
+	
+	(hwnd%ico_pfix%)  := Format("{:#x}",hWnd)
+	(framen%ico_pfix%):= framen 
+	(u_i_D%ico_pfix%) := u_i_D
+	%ico_pfix%ind := ( Current := 1 ) ;init to frame 1
+		
+	settimer, ti5m0r,% fps_sleep	
+	return,
+	
+	ti5m0r: ;{         animation playback timer
+			 %ico_pfix%ind +=  1
+if  (%ico_pfix%ind  < (%ico_pfix%frames+1)) { 
+;msgbox % (%ico_pfix%ind  " less than " %ico_pfix%frames+1 "`n" (%ico_pfix%frame_index)[%ico_pfix%ind] "`n " %ico_pfix%ind )
+		;msgbox,% current 
+
+		if (current && !(current = ( %ico_pfix%ind) ) )
+		{
+			current := ( %ico_pfix%frame_index)[%ico_pfix%ind]
+				tt("00 " current " " %ico_pfix%frames)
+
+	}
+	;msgbox % "a " current " " frames
+	}else, {
+		current += 1 
+		(%ico_pfix%ind) +=  1  ; start again
+		;msgbox,% current
+		if  !(%ico_pfix%hbitmaps[current  ].HpGfx)
+		;msgbox % "b " current
+		{
+		current := 0
+return					
+}
+msgbox % current 
+ 
+			if  ((%ico_pfix%hbitmaps[current  ].HpGfx) && (%ico_pfix%hbitmaps[current].HpGfx)  = (%ico_pfix%hbitmaps[current+(%ico_pfix%frames*2)].HpGfx)) {
+		;msgbox % (%ico_pfix%hbitmaps[current].HpGfx) "`n" (%ico_pfix%hbitmaps[current+frames].HpGfx) "`n" (pprev)
+				cunt:= TrayIcon_Set((hwnd%ico_pfix%),(u_i_D%ico_pfix%),(%ico_pfix%hbitmaps)[current].HpGfx)
+				if !(cunt) {
+					if poopy:=(%ico_pfix%hbitmaps)[current].HpGfx
+					{
+						winget, penis, processpath, ahk_id %hund%
+						SplitPath, penis,, , , PNNoExt
+						   ; msgbox,0,% PNNoExt " ELEVATION ERROR",% "good bitmap handle`n" Format("{:#x}",poopy) "`nError setting icon. Exiting Now",4
+							exitapp
+					} else,{
+						;msgbox,0,% PNNoExt " HBIITMAP ERROR" ,% "bad bitmap handle`nError setting icon. Exiting Now",4
+						exitapp
+					}
+				}
+				pprev:=(%ico_pfix%hbitmaps)[current].HpGfx
+			} ; else, msgbox % "turds" current "`n" (%ico_pfix%hbitmaps[current].HpGfx)  "`n" (%ico_pfix%hbitmaps[current+(frames*2)].HpGfx)
+			;msgbox % "turds"
+			}
+
+		if   !playing
+				settimer, ti5m0r,% "Off"	
+		else if !winexist("ahk_id " (hwnd%ico_pfix%))
+		{
+	;ani_ :=  False ;Ani_T_Upd8_AllOW:=True
+		SendWM_CoPYData("TrAnIconZ_Refresh", "anitray.ahk  ahk_class AutoHotkey")
+		sleep 100
+		exitapp,
+		}
+		return, ;}
+
+}
+Receive_WM_COPYDATA( wParam, lParam ) {				
+	StringAddress := NumGet(lParam+(2*A_PtrSize))		 
+;	msgbox % CopyOfData    := StrGet(StringAddress) 						 
+	gosub, %CopyOfData% ; switch CopyOfData { ; } ;C_Str=C:\Windows\system32\cmd.exe /s /k pushd "%CopyOfData%"	
+	return, True
+}
+
+xit:
+exitapp,
